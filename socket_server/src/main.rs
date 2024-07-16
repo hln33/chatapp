@@ -7,7 +7,6 @@ use axum::{routing::get, Router};
 
 use tokio::signal;
 use tower_http::cors::CorsLayer;
-use tower_http::trace::{DefaultMakeSpan, TraceLayer};
 
 #[tokio::main]
 async fn main() {
@@ -16,11 +15,7 @@ async fn main() {
     let app = Router::new()
         .route("/hello", get(|| async { "hello, you!" }))
         .route("/ws", get(ws_handler))
-        .layer(CorsLayer::permissive())
-        .layer(
-            TraceLayer::new_for_http()
-                .make_span_with(DefaultMakeSpan::default().include_headers(true)),
-        );
+        .layer(CorsLayer::permissive());
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3001")
         .await
