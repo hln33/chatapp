@@ -1,4 +1,7 @@
+use std::net::SocketAddr;
+
 use axum::extract::ws::{Message, WebSocket, WebSocketUpgrade};
+use axum::extract::ConnectInfo;
 use axum::response::IntoResponse;
 use axum::{routing::get, Router};
 
@@ -23,16 +26,22 @@ async fn main() {
         .await
         .unwrap();
 
-    axum::serve(listener, app)
-        .with_graceful_shutdown(shutdown_signal())
-        .await
-        .unwrap();
+    axum::serve(
+        listener,
+        app.into_make_service_with_connect_info::<SocketAddr>(),
+    )
+    .with_graceful_shutdown(shutdown_signal())
+    .await
+    .unwrap();
 
     println!("ending web socket server...")
 }
 
-async fn ws_handler(ws: WebSocketUpgrade) -> impl IntoResponse {
-    println!("Request for web socket!");
+async fn ws_handler(
+    ws: WebSocketUpgrade,
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+) -> impl IntoResponse {
+    println!("Request for web socket fron {addr}!");
     ws.on_upgrade(handle_socket)
 }
 
