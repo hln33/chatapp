@@ -37,19 +37,19 @@ async fn ws_handler(
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
 ) -> impl IntoResponse {
     println!("Request for web socket fron {addr}!");
-    ws.on_upgrade(handle_socket)
+    ws.on_upgrade(move |socket| handle_socket(socket, addr))
 }
 
-async fn handle_socket(mut socket: WebSocket) {
+async fn handle_socket(mut socket: WebSocket, who: SocketAddr) {
     if socket.send(Message::Ping(vec![1, 2, 3])).await.is_ok() {
-        // println!("Pinged {who}...");
+        println!("Pinged {who}...");
     } else {
-        // println!("could not ping {who}!");
+        println!("could not ping {who}!");
     }
 
     while let Some(msg) = socket.recv().await {
-        let msg = msg.unwrap().into_text().unwrap();
-        println!("message: {msg}");
+        // let msg = msg.unwrap().into_text().unwrap();
+        // println!("message: {msg}");
     }
 }
 
