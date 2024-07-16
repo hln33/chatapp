@@ -1,24 +1,50 @@
 'use client';
 
-import { useEffect } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 
 export default function ChatBox() {
-  useEffect(() => {
-    const websocket = new WebSocket('ws://localhost:3001/ws');
-    console.log(websocket);
+  const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
+  const [message, setMessage] = useState('');
 
-    websocket.onopen = () => {
+  useEffect(() => {
+    const ws = new WebSocket('ws://localhost:3001/ws');
+    setWebSocket(ws);
+    console.log(ws);
+
+    ws.onopen = () => {
       console.log('web socket opened');
-      websocket.send('hello server!');
+      ws.send('hello server!');
     };
-    websocket.onclose = () => {
+    ws.onclose = () => {
       console.log('web socket closed');
     };
 
     return () => {
-      websocket.close();
+      ws.close();
     };
   }, []);
 
-  return <p>chatbox</p>;
+  const sendMessage = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (webSocket && message) {
+      webSocket.send(message);
+      setMessage('');
+    }
+  };
+
+  return (
+    <>
+      <p>chatbox</p>
+
+      <form onSubmit={sendMessage}>
+        <input
+          style={{ color: 'black' }}
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+        <button type="submit">Send</button>
+      </form>
+    </>
+  );
 }
