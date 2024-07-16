@@ -1,12 +1,11 @@
 use std::net::SocketAddr;
 
-use axum::extract::ws::{Message, WebSocket, WebSocketUpgrade};
-use axum::extract::ConnectInfo;
-use axum::response::IntoResponse;
 use axum::{routing::get, Router};
 
 use tokio::signal;
 use tower_http::cors::CorsLayer;
+
+use socket_server::ws_handler;
 
 #[tokio::main]
 async fn main() {
@@ -32,33 +31,12 @@ async fn main() {
     println!("ending web socket server...")
 }
 
-async fn ws_handler(
-    ws: WebSocketUpgrade,
-    ConnectInfo(addr): ConnectInfo<SocketAddr>,
-) -> impl IntoResponse {
-    println!("Request for web socket fron {addr}!");
-    ws.on_upgrade(move |socket| handle_socket(socket, addr))
-}
-
-async fn handle_socket(mut socket: WebSocket, who: SocketAddr) {
-    if socket.send(Message::Ping(vec![1, 2, 3])).await.is_ok() {
-        println!("Pinged {who}...");
-    } else {
-        println!("could not ping {who}!");
-    }
-
-    while let Some(msg) = socket.recv().await {
-        // let msg = msg.unwrap().into_text().unwrap();
-        // println!("message: {msg}");
-    }
-}
-
 async fn shutdown_signal() {
     let ctrl_c = async {
         signal::ctrl_c().await.unwrap();
     };
 
     tokio::select! {
-        _ = ctrl_c => {println!("ctrl+c detected...")},
+        _ = ctrl_c => { println!("ctrl+c detected...") },
     }
 }

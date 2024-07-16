@@ -9,10 +9,12 @@ export default function ChatBox() {
 
     websocket.onopen = () => {
       console.log('web socket opened');
+      websocket.send('hello server!');
     };
     websocket.onclose = () => {
       console.log('web socket closed');
     };
+
     return () => {
       websocket.close();
     };
