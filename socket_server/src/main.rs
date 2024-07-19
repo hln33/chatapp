@@ -1,18 +1,16 @@
-use std::net::SocketAddr;
-
 use axum::{routing::get, Router};
-
+use socket_server::ws_handler;
+use std::net::SocketAddr;
 use tokio::signal;
 use tower_http::{cors::CorsLayer, trace::TraceLayer};
-
-use socket_server::ws_handler;
+use tracing::{info, level_filters::LevelFilter};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
 
 #[tokio::main]
 async fn main() {
-    println!("Starting web socket server...");
-
-    let stdout_log = tracing_subscriber::fmt::layer().pretty();
+    let stdout_log = tracing_subscriber::fmt::layer()
+        .pretty()
+        .with_filter(LevelFilter::DEBUG);
     tracing_subscriber::registry().with(stdout_log).init();
 
     let app = Router::new()
@@ -25,6 +23,7 @@ async fn main() {
         .await
         .unwrap();
 
+    info!("Starting web socket server...");
     axum::serve(
         listener,
         app.into_make_service_with_connect_info::<SocketAddr>(),
@@ -32,8 +31,7 @@ async fn main() {
     .with_graceful_shutdown(shutdown_signal())
     .await
     .unwrap();
-
-    println!("ending web socket server...")
+    info!("ending web socket server...")
 }
 
 async fn shutdown_signal() {
