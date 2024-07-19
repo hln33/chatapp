@@ -8,9 +8,6 @@ export default function ChatBox() {
 
   useEffect(() => {
     const ws = new WebSocket('ws://localhost:3001/ws');
-    setWebSocket(ws);
-    console.log(ws);
-
     ws.onopen = () => {
       console.log('web socket opened');
       ws.send('hello server!');
@@ -18,6 +15,7 @@ export default function ChatBox() {
     ws.onclose = () => {
       console.log('web socket closed');
     };
+    setWebSocket(ws);
 
     return () => {
       ws.close();

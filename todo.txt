@@ -5,3 +5,6 @@ with other people to send text messages back and forth
 1. create simple main page
 2. create simple Rust webserver to use for websocket eventually
 3. be able to send request to Rust server
+
+4. send message to another user (different tab)
+5. 
