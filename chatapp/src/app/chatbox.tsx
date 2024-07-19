@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useState } from 'react';
 
 export default function ChatBox() {
   const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
-  const [message, setMessage] = useState('');
+  const [draftMessage, setDraftMessage] = useState('');
 
   useEffect(() => {
     const ws = new WebSocket('ws://localhost:3001/ws');
@@ -24,9 +24,9 @@ export default function ChatBox() {
 
   const sendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (webSocket && message) {
-      webSocket.send(message);
-      setMessage('');
+    if (webSocket && draftMessage) {
+      webSocket.send(draftMessage);
+      setDraftMessage('');
     }
   };
 
@@ -38,8 +38,8 @@ export default function ChatBox() {
         <input
           style={{ color: 'black' }}
           type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          value={draftMessage}
+          onChange={(e) => setDraftMessage(e.target.value)}
         />
         <button type="submit">Send</button>
       </form>

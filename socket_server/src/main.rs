@@ -3,18 +3,23 @@ use std::net::SocketAddr;
 use axum::{routing::get, Router};
 
 use tokio::signal;
-use tower_http::cors::CorsLayer;
+use tower_http::{cors::CorsLayer, trace::TraceLayer};
 
 use socket_server::ws_handler;
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
 
 #[tokio::main]
 async fn main() {
     println!("Starting web socket server...");
 
+    let stdout_log = tracing_subscriber::fmt::layer().pretty();
+    tracing_subscriber::registry().with(stdout_log).init();
+
     let app = Router::new()
         .route("/hello", get(|| async { "hello, you!" }))
         .route("/ws", get(ws_handler))
-        .layer(CorsLayer::permissive());
+        .layer(CorsLayer::permissive())
+        .layer(TraceLayer::new_for_http());
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3001")
         .await
