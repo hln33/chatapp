@@ -7,6 +7,14 @@ export default function ChatBox() {
   const [draftMessage, setDraftMessage] = useState('');
 
   useEffect(() => {
+    // get session cookie
+    fetch('http://localhost:3001/session', {
+      method: 'POST',
+      credentials: 'include',
+    })
+      .then((res) => console.log(res))
+      .catch((e) => console.error(e));
+
     const ws = new WebSocket('ws://localhost:3001/ws');
     ws.onopen = () => {
       console.log('web socket opened');

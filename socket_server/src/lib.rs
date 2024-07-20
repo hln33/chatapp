@@ -9,7 +9,10 @@ use axum::{
     Router,
 };
 use tokio::signal;
-use tower_http::{cors::CorsLayer, trace::TraceLayer};
+use tower_http::{
+    cors::{Cors, CorsLayer},
+    trace::TraceLayer,
+};
 
 use session::{create_session_handler, UserSession};
 use web_socket::ws_handler;
@@ -30,7 +33,11 @@ pub async fn start_server() {
         .route("/session", post(create_session_handler))
         .route("/ws", get(ws_handler))
         .with_state(app_state)
-        .layer(CorsLayer::permissive())
+        .layer(
+            CorsLayer::new()
+                .allow_origin(["http://localhost:3000".parse().unwrap()])
+                .allow_credentials(true),
+        )
         .layer(TraceLayer::new_for_http());
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3001")
