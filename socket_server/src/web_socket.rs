@@ -7,12 +7,13 @@ use axum::{
     },
     response::IntoResponse,
 };
+use tracing::info;
 
 pub async fn ws_handler(
     ws: WebSocketUpgrade,
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
 ) -> impl IntoResponse {
-    println!("Request for web socket fron {addr}!");
+    info!("Request for web socket fron {addr}!");
     ws.on_upgrade(move |socket| handle_socket(socket, addr))
 }
 

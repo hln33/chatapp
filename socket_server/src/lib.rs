@@ -1,17 +1,35 @@
-use std::net::SocketAddr;
+use std::{
+    collections::HashMap,
+    net::SocketAddr,
+    sync::{Arc, Mutex},
+};
 
-use axum::{routing::get, Router};
+use axum::{
+    routing::{get, post},
+    Router,
+};
 use tokio::signal;
 use tower_http::{cors::CorsLayer, trace::TraceLayer};
 
+use session::{create_session_handler, UserSession};
 use web_socket::ws_handler;
 
+mod session;
 mod web_socket;
 
+#[derive(Default)]
+struct AppState {
+    pub users: Mutex<HashMap<String, UserSession>>,
+}
+
 pub async fn start_server() {
+    let app_state = Arc::new(AppState::default());
+
     let app = Router::new()
         .route("/hello", get(|| async { "hello, you!" }))
+        .route("/session", post(create_session_handler))
         .route("/ws", get(ws_handler))
+        .with_state(app_state)
         .layer(CorsLayer::permissive())
         .layer(TraceLayer::new_for_http());
 
