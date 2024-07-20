@@ -1,58 +1,39 @@
-use std::{net::SocketAddr, ops::ControlFlow};
+use std::net::SocketAddr;
 
-use axum::{
-    extract::{
-        ws::{Message, WebSocket},
-        ConnectInfo, WebSocketUpgrade,
-    },
-    response::IntoResponse,
-};
+use axum::{routing::get, Router};
+use tokio::signal;
+use tower_http::{cors::CorsLayer, trace::TraceLayer};
 
-pub async fn ws_handler(
-    ws: WebSocketUpgrade,
-    ConnectInfo(addr): ConnectInfo<SocketAddr>,
-) -> impl IntoResponse {
-    println!("Request for web socket fron {addr}!");
-    ws.on_upgrade(move |socket| handle_socket(socket, addr))
+use web_socket::ws_handler;
+
+mod web_socket;
+
+pub async fn start_server() {
+    let app = Router::new()
+        .route("/hello", get(|| async { "hello, you!" }))
+        .route("/ws", get(ws_handler))
+        .layer(CorsLayer::permissive())
+        .layer(TraceLayer::new_for_http());
+
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:3001")
+        .await
+        .unwrap();
+
+    axum::serve(
+        listener,
+        app.into_make_service_with_connect_info::<SocketAddr>(),
+    )
+    .with_graceful_shutdown(shutdown_signal())
+    .await
+    .unwrap();
 }
 
-async fn handle_socket(mut socket: WebSocket, who: SocketAddr) {
-    // test ping
-    if socket.send(Message::Ping(vec![1, 2, 3])).await.is_ok() {
-        println!("Pinged {who}...");
-    } else {
-        println!("could not ping {who}!");
-    }
+async fn shutdown_signal() {
+    let ctrl_c = async {
+        signal::ctrl_c().await.unwrap();
+    };
 
-    while let Some(msg) = socket.recv().await {
-        if let Ok(msg) = msg {
-            if process_message(msg, who).is_break() {
-                return;
-            }
-        }
+    tokio::select! {
+        _ = ctrl_c => { println!("ctrl+c detected...") },
     }
-}
-
-fn process_message(msg: Message, who: SocketAddr) -> ControlFlow<(), ()> {
-    match msg {
-        Message::Text(text) => {
-            println!(">>> {who} sent {text}");
-        }
-        Message::Close(close) => {
-            if let Some(close_frame) = close {
-                let code = close_frame.code;
-                let reason = close_frame.reason;
-                print!(">>> {who} sent close with code {code} and reason {reason}")
-            } else {
-                println!(">>> {who} somehow sent close message without a closeframe");
-            }
-            return ControlFlow::Break(());
-        }
-        Message::Pong(v) => {
-            println!(">>> {who} sent pong with {v:?}");
-        }
-        _ => panic!("unsupported message type!"),
-    }
-
-    ControlFlow::Continue(())
 }
