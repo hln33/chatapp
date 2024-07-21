@@ -19,21 +19,25 @@ export default function ChatBox() {
     const ws = new WebSocket('ws://localhost:3001/ws');
     ws.onopen = () => {
       console.log('web socket opened');
-      ws.send('hello server!');
     };
     ws.onclose = () => {
       console.log('web socket closed');
     };
-    ws.onmessage = (event) => {
-      console.log(event.data);
-    };
-
     setWebSocket(ws);
 
     return () => {
       ws.close();
     };
   }, []);
+
+  useEffect(() => {
+    if (webSocket === null) return;
+
+    webSocket.onmessage = (event) => {
+      console.log(event.data);
+      setMessages([...messages, event.data]);
+    };
+  }, [messages, webSocket]);
 
   const sendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
