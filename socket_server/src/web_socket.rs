@@ -7,7 +7,7 @@ use axum::{
     },
     response::IntoResponse,
 };
-use tracing::info;
+use tracing::{error, info};
 
 pub async fn ws_handler(
     ws: WebSocketUpgrade,
@@ -18,18 +18,18 @@ pub async fn ws_handler(
 }
 
 async fn handle_socket(mut socket: WebSocket, who: SocketAddr) {
-    // test ping
-    if socket.send(Message::Ping(vec![1, 2, 3])).await.is_ok() {
-        println!("Pinged {who}...");
-    } else {
-        println!("could not ping {who}!");
-    }
-
     while let Some(msg) = socket.recv().await {
         if let Ok(msg) = msg {
             if process_message(msg, who).is_break() {
                 return;
             }
+        }
+
+        if let Err(err) = socket
+            .send(Message::Text("server: I got your message.".to_string()))
+            .await
+        {
+            error!("{err}");
         }
     }
 }
