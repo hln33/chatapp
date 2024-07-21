@@ -23,6 +23,10 @@ export default function ChatBox() {
     ws.onclose = () => {
       console.log('web socket closed');
     };
+    ws.onmessage = (evt) => {
+      console.log(evt.data);
+      setMessages((prevMessages) => [...prevMessages, evt.data]);
+    };
     setWebSocket(ws);
 
     return () => {
@@ -30,41 +34,38 @@ export default function ChatBox() {
     };
   }, []);
 
-  useEffect(() => {
-    if (webSocket === null) return;
-
-    webSocket.onmessage = (event) => {
-      console.log(event.data);
-      setMessages([...messages, event.data]);
-    };
-  }, [messages, webSocket]);
-
   const sendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (webSocket && draftMessage) {
       webSocket.send(draftMessage);
-      setMessages([...messages, draftMessage]);
+      setMessages([...messages, `You: ${draftMessage}`]);
       setDraftMessage('');
     }
   };
 
   return (
-    <>
-      <p>chatbox</p>
+    <div className="space-y-5">
+      <h3 className="text-center">chatbox</h3>
 
-      {messages.map((msg, index) => (
-        <div key={index}>{msg}</div>
-      ))}
+      <div className="flex flex-col bg-white">
+        {messages.map((msg, index) => (
+          <div className="text-black" key={index}>
+            {msg}
+          </div>
+        ))}
+      </div>
 
-      <form onSubmit={sendMessage}>
+      <form className="flex flex-col" onSubmit={sendMessage}>
         <input
           style={{ color: 'black' }}
           type="text"
           value={draftMessage}
           onChange={(e) => setDraftMessage(e.target.value)}
         />
-        <button type="submit">Send</button>
+        <button className="bg-cyan-400" type="submit">
+          Send
+        </button>
       </form>
-    </>
+    </div>
   );
 }
