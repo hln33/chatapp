@@ -21,9 +21,10 @@ pub async fn ws_handler(
     ws.on_upgrade(move |socket| handle_socket(socket, addr, state))
 }
 
-async fn handle_socket(mut socket: WebSocket, who: SocketAddr, state: Arc<AppState>) {
+async fn handle_socket(socket: WebSocket, who: SocketAddr, state: Arc<AppState>) {
     let (mut sender, mut reciever) = socket.split();
 
+    // listen for broadcast messages and relay the message to this socket
     let mut rx = state.tx.subscribe();
     let mut _send_task = tokio::spawn(async move {
         while let Ok(msg) = rx.recv().await {
@@ -33,6 +34,7 @@ async fn handle_socket(mut socket: WebSocket, who: SocketAddr, state: Arc<AppSta
         }
     });
 
+    // take message from this socket and broadcast to all subscribers
     let tx = state.tx.clone();
     let mut _recv_task = tokio::spawn(async move {
         while let Some(Ok(Message::Text(msg))) = reciever.next().await {
