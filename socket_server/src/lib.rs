@@ -8,7 +8,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
-use tokio::signal;
+use tokio::{signal, sync::broadcast};
 use tower_http::{cors::CorsLayer, trace::TraceLayer};
 
 use session::{create_session_handler, UserSession};
@@ -17,15 +17,23 @@ use web_socket::ws_handler;
 mod session;
 mod web_socket;
 
-#[derive(Default)]
+const FRONT_END_URL: &str = "http://localhost:3000";
+const LISTENER_ADDR: &str = "127.0.0.1:3001";
+
 struct AppState {
-    pub users: Mutex<HashMap<String, UserSession>>,
+    users: Mutex<HashMap<String, UserSession>>,
+    tx: broadcast::Sender<String>,
 }
 
 pub async fn start_server() {
-    let app_state = Arc::new(AppState::default());
+    let (tx, _rx) = broadcast::channel(100);
+    let app_state = Arc::new(AppState {
+        users: Mutex::new(HashMap::new()),
+        tx,
+    });
+
     let cors = CorsLayer::new()
-        .allow_origin(["http://localhost:3000".parse().unwrap()])
+        .allow_origin([FRONT_END_URL.parse().unwrap()])
         .allow_credentials(true);
 
     let app = Router::new()
@@ -35,10 +43,7 @@ pub async fn start_server() {
         .with_state(app_state)
         .layer(cors)
         .layer(TraceLayer::new_for_http());
-
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:3001")
-        .await
-        .unwrap();
+    let listener = tokio::net::TcpListener::bind(LISTENER_ADDR).await.unwrap();
 
     axum::serve(
         listener,

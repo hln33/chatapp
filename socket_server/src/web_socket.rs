@@ -1,37 +1,44 @@
-use std::{net::SocketAddr, ops::ControlFlow};
+use std::{net::SocketAddr, ops::ControlFlow, sync::Arc};
 
 use axum::{
     extract::{
         ws::{Message, WebSocket},
-        ConnectInfo, WebSocketUpgrade,
+        ConnectInfo, State, WebSocketUpgrade,
     },
     response::IntoResponse,
 };
-use tracing::{error, info};
+use futures::{stream::StreamExt, SinkExt};
+use tracing::info;
+
+use crate::AppState;
 
 pub async fn ws_handler(
     ws: WebSocketUpgrade,
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    State(state): State<Arc<AppState>>,
 ) -> impl IntoResponse {
     info!("Request for web socket fron {addr}!");
-    ws.on_upgrade(move |socket| handle_socket(socket, addr))
+    ws.on_upgrade(move |socket| handle_socket(socket, addr, state))
 }
 
-async fn handle_socket(mut socket: WebSocket, who: SocketAddr) {
-    while let Some(msg) = socket.recv().await {
-        if let Ok(msg) = msg {
-            if process_message(msg, who).is_break() {
-                return;
+async fn handle_socket(mut socket: WebSocket, who: SocketAddr, state: Arc<AppState>) {
+    let (mut sender, mut reciever) = socket.split();
+
+    let mut rx = state.tx.subscribe();
+    let mut _send_task = tokio::spawn(async move {
+        while let Ok(msg) = rx.recv().await {
+            if sender.send(Message::Text(msg)).await.is_err() {
+                break;
             }
         }
+    });
 
-        if let Err(err) = socket
-            .send(Message::Text("server: I got your message.".to_string()))
-            .await
-        {
-            error!("{err}");
+    let tx = state.tx.clone();
+    let mut _recv_task = tokio::spawn(async move {
+        while let Some(Ok(Message::Text(msg))) = reciever.next().await {
+            let _ = tx.send(msg);
         }
-    }
+    });
 }
 
 fn process_message(msg: Message, who: SocketAddr) -> ControlFlow<(), ()> {
