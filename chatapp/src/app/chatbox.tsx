@@ -2,6 +2,8 @@
 
 import { FormEvent, useEffect, useState } from 'react';
 
+const SOCKET_SERVER_URL = 'http://localhost:3001';
+
 export default function ChatBox() {
   const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
   const [messages, setMessages] = useState<string[]>([]);
@@ -9,14 +11,14 @@ export default function ChatBox() {
 
   useEffect(() => {
     // get session cookie
-    fetch('http://localhost:3001/session', {
+    fetch(`${SOCKET_SERVER_URL}/session`, {
       method: 'POST',
       credentials: 'include',
     })
       .then((res) => console.log(res))
       .catch((err) => console.error(err));
 
-    const ws = new WebSocket('ws://localhost:3001/ws');
+    const ws = new WebSocket(`${SOCKET_SERVER_URL}/ws`);
     ws.onopen = () => {
       console.log('web socket opened');
     };
@@ -57,7 +59,7 @@ export default function ChatBox() {
 
       <form className="flex flex-col" onSubmit={sendMessage}>
         <input
-          style={{ color: 'black' }}
+          className="text-black"
           type="text"
           value={draftMessage}
           onChange={(e) => setDraftMessage(e.target.value)}
