@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, Dispatch, FormEvent, useEffect, useState } from 'react';
 
 const SOCKET_SERVER_URL = 'http://localhost:3001';
 
@@ -51,6 +51,14 @@ export default function ChatBox() {
     }
   };
 
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    setState: Dispatch<string>
+  ) => {
+    setState(e.target.value);
+    e.currentTarget.setCustomValidity('');
+  };
+
   return (
     <div className="space-y-5">
       <h3 className="text-center">chatbox</h3>
@@ -66,17 +74,25 @@ export default function ChatBox() {
       <form className="space-y-3 flex flex-col" onSubmit={sendMessage}>
         <input
           className="text-black"
+          required
           type="text"
-          value={username}
           placeholder="username"
-          onChange={(e) => setUsername(e.target.value)}
+          value={username}
+          onChange={(e) => handleInputChange(e, setUsername)}
+          onInvalid={(e) =>
+            e.currentTarget.setCustomValidity('Username must not be blank')
+          }
         />
         <input
           className="text-black"
+          required
           type="text"
-          value={draftMessage}
           placeholder="message"
-          onChange={(e) => setDraftMessage(e.target.value)}
+          value={draftMessage}
+          onChange={(e) => handleInputChange(e, setDraftMessage)}
+          onInvalid={(e) =>
+            e.currentTarget.setCustomValidity('Message must not be blank')
+          }
         />
         <button className="bg-cyan-400" type="submit">
           Send
