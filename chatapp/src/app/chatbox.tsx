@@ -7,6 +7,7 @@ const SOCKET_SERVER_URL = 'http://localhost:3001';
 export default function ChatBox() {
   const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
   const [messages, setMessages] = useState<string[]>([]);
+  const [username, setUsername] = useState('');
   const [draftMessage, setDraftMessage] = useState('');
 
   useEffect(() => {
@@ -38,8 +39,13 @@ export default function ChatBox() {
 
   const sendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (webSocket && draftMessage) {
-      webSocket.send(draftMessage);
+    if (webSocket && draftMessage && username) {
+      const messageFormat = {
+        username,
+        message: draftMessage,
+      };
+
+      webSocket.send(JSON.stringify(messageFormat));
       setMessages([...messages, `You: ${draftMessage}`]);
       setDraftMessage('');
     }
@@ -57,11 +63,19 @@ export default function ChatBox() {
         ))}
       </div>
 
-      <form className="flex flex-col" onSubmit={sendMessage}>
+      <form className="space-y-3 flex flex-col" onSubmit={sendMessage}>
+        <input
+          className="text-black"
+          type="text"
+          value={username}
+          placeholder="username"
+          onChange={(e) => setUsername(e.target.value)}
+        />
         <input
           className="text-black"
           type="text"
           value={draftMessage}
+          placeholder="message"
           onChange={(e) => setDraftMessage(e.target.value)}
         />
         <button className="bg-cyan-400" type="submit">

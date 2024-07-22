@@ -8,9 +8,16 @@ use axum::{
     response::IntoResponse,
 };
 use futures::{stream::StreamExt, SinkExt};
-use tracing::info;
+use serde::Deserialize;
+use tracing::{error, info};
 
 use crate::AppState;
+
+#[derive(Deserialize)]
+struct UserMessage {
+    username: String,
+    message: String,
+}
 
 pub async fn ws_handler(
     ws: WebSocketUpgrade,
@@ -38,7 +45,13 @@ async fn handle_socket(socket: WebSocket, who: SocketAddr, state: Arc<AppState>)
     let tx = state.tx.clone();
     let mut _recv_task = tokio::spawn(async move {
         while let Some(Ok(Message::Text(msg))) = reciever.next().await {
-            let _ = tx.send(msg);
+            match serde_json::from_str::<UserMessage>(&msg) {
+                Ok(payload) => {
+                    let UserMessage { username, message } = payload;
+                    let _ = tx.send(format!("{username}: {message}"));
+                }
+                Err(e) => error!("Failed to parse message: {e}"),
+            }
         }
     });
 }
