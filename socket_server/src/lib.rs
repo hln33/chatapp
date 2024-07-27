@@ -12,6 +12,7 @@ use tokio::{signal, sync::broadcast};
 use tower_http::{cors::CorsLayer, trace::TraceLayer};
 
 use session::{create_session_handler, UserSession};
+use uuid::Uuid;
 use web_socket::ws_handler;
 
 mod session;
@@ -22,7 +23,7 @@ const LISTENER_ADDR: &str = "127.0.0.1:3001";
 
 struct AppState {
     users: Mutex<HashMap<String, UserSession>>,
-    tx: broadcast::Sender<String>,
+    tx: broadcast::Sender<(Uuid, String)>,
 }
 
 pub async fn start_server() {
