@@ -1,13 +1,10 @@
 'use client';
 
 import { ChangeEvent, Dispatch, FormEvent, useEffect, useState } from 'react';
+import { Message } from './types';
+import MessageBubble from './messageBubble';
 
 const SOCKET_SERVER_URL = 'http://localhost:3001';
-
-type Message = {
-  text: string;
-  fromCurrentUser: boolean;
-};
 
 export default function ChatBox() {
   const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
@@ -52,13 +49,9 @@ export default function ChatBox() {
         username,
         message: draftMessage,
       };
-
       webSocket.send(JSON.stringify(messageFormat));
 
-      setMessages([
-        ...Messages,
-        { text: `You: ${draftMessage}`, fromCurrentUser: true },
-      ]);
+      setMessages([...Messages, { text: draftMessage, fromCurrentUser: true }]);
       setDraftMessage('');
     }
   };
@@ -77,9 +70,7 @@ export default function ChatBox() {
 
       <div className="flex flex-col bg-white">
         {Messages.map((msg, index) => (
-          <div className="flex justify-start" key={index}>
-            <div className="text-black">{msg.text}</div>
-          </div>
+          <MessageBubble message={msg} key={index} />
         ))}
       </div>
 

@@ -1,4 +1,4 @@
-import ChatBox from './chatbox';
+import ChatBox from './_chatbox/chatbox';
 
 export default function Home() {
   // test get request to websocket server
