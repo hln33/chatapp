@@ -8,16 +8,16 @@ use axum::{
     response::IntoResponse,
 };
 use futures::{stream::StreamExt, SinkExt};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use tracing::{error, info};
 use uuid::Uuid;
 
 use crate::AppState;
 
-#[derive(Deserialize)]
-struct UserMessage {
+#[derive(Clone, Deserialize, Serialize)]
+pub struct UserMessage {
     username: String,
-    message: String,
+    text: String,
 }
 
 pub async fn ws_handler(
@@ -42,7 +42,8 @@ async fn handle_socket(socket: WebSocket, state: Arc<AppState>) {
                 continue;
             }
 
-            if sender.send(Message::Text(msg)).await.is_err() {
+            let json_string = serde_json::to_string(&msg).expect("struct to serializable");
+            if sender.send(Message::Text(json_string)).await.is_err() {
                 break;
             }
         }
@@ -52,8 +53,8 @@ async fn handle_socket(socket: WebSocket, state: Arc<AppState>) {
     let tx = state.tx.clone();
     let mut _recv_task = tokio::spawn(async move {
         while let Some(Ok(Message::Text(msg))) = reciever.next().await {
-            if let Some(UserMessage { username, message }) = parse_json(&msg) {
-                let _ = tx.send((client_id, format!("{username}: {message}")));
+            if let Some(json_msg) = parse_json(&msg) {
+                let _ = tx.send((client_id, json_msg));
             }
         }
     });

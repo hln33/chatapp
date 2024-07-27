@@ -15,8 +15,13 @@ export default function MessageBubble({ message }: Props) {
 
   return (
     <div className={`flex ${alignment}`}>
-      <div className={`p-3 max-w-xs ${color} ${roundedCorners}`}>
-        {message.text}
+      <div className="">
+        {!message.fromCurrentUser && (
+          <p className="pr-2 text-right text-slate-400">{message.username}</p>
+        )}
+        <div className={`p-3 max-w-xs ${color} ${roundedCorners}`}>
+          {message.text}
+        </div>
       </div>
     </div>
   );

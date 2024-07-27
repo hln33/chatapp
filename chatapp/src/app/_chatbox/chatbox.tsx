@@ -22,17 +22,20 @@ export default function ChatBox() {
       .catch((err) => console.error(err));
 
     const ws = new WebSocket(`${SOCKET_SERVER_URL}/ws`);
-    ws.onopen = () => {
-      console.log('web socket opened');
-    };
-    ws.onclose = () => {
-      console.log('web socket closed');
-    };
+    ws.onopen = () => console.log('web socket opened');
+    ws.onclose = () => console.log('web socket closed');
     ws.onmessage = (evt) => {
       console.log(evt.data);
+
+      const message: Message = JSON.parse(evt.data);
+
       setMessages((prevMessages) => [
         ...prevMessages,
-        { text: evt.data, fromCurrentUser: false },
+        {
+          fromCurrentUser: false,
+          username: message.username,
+          text: message.text,
+        },
       ]);
     };
     setWebSocket(ws);
@@ -47,11 +50,14 @@ export default function ChatBox() {
     if (webSocket && draftMessage && username) {
       const messageFormat = {
         username,
-        message: draftMessage,
+        text: draftMessage,
       };
       webSocket.send(JSON.stringify(messageFormat));
 
-      setMessages([...Messages, { text: draftMessage, fromCurrentUser: true }]);
+      setMessages([
+        ...Messages,
+        { fromCurrentUser: true, username, text: draftMessage },
+      ]);
       setDraftMessage('');
     }
   };

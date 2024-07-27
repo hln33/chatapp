@@ -13,7 +13,7 @@ use tower_http::{cors::CorsLayer, trace::TraceLayer};
 
 use session::{create_session_handler, UserSession};
 use uuid::Uuid;
-use web_socket::ws_handler;
+use web_socket::{ws_handler, UserMessage};
 
 mod session;
 mod web_socket;
@@ -23,7 +23,7 @@ const LISTENER_ADDR: &str = "127.0.0.1:3001";
 
 struct AppState {
     users: Mutex<HashMap<String, UserSession>>,
-    tx: broadcast::Sender<(Uuid, String)>,
+    tx: broadcast::Sender<(Uuid, UserMessage)>,
 }
 
 pub async fn start_server() {
