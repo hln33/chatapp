@@ -25,10 +25,10 @@ pub async fn ws_handler(
     State(state): State<Arc<AppState>>,
 ) -> impl IntoResponse {
     info!("Request for web socket fron {addr}!");
-    ws.on_upgrade(move |socket| handle_socket(socket, addr, state))
+    ws.on_upgrade(move |socket| handle_socket(socket, state))
 }
 
-async fn handle_socket(socket: WebSocket, who: SocketAddr, state: Arc<AppState>) {
+async fn handle_socket(socket: WebSocket, state: Arc<AppState>) {
     let (mut sender, mut reciever) = socket.split();
 
     // listen for broadcast messages and relay the message to this socket
@@ -45,15 +45,21 @@ async fn handle_socket(socket: WebSocket, who: SocketAddr, state: Arc<AppState>)
     let tx = state.tx.clone();
     let mut _recv_task = tokio::spawn(async move {
         while let Some(Ok(Message::Text(msg))) = reciever.next().await {
-            match serde_json::from_str::<UserMessage>(&msg) {
-                Ok(payload) => {
-                    let UserMessage { username, message } = payload;
-                    let _ = tx.send(format!("{username}: {message}"));
-                }
-                Err(e) => error!("Failed to parse message: {e}"),
+            if let Some(UserMessage { username, message }) = parse_json(&msg) {
+                let _ = tx.send(format!("{username}: {message}"));
             }
         }
     });
+}
+
+fn parse_json(msg: &str) -> Option<UserMessage> {
+    match serde_json::from_str::<UserMessage>(msg) {
+        Ok(payload) => Some(payload),
+        Err(e) => {
+            error!("Failed to parse message: {e}");
+            None
+        }
+    }
 }
 
 fn process_message(msg: Message, who: SocketAddr) -> ControlFlow<(), ()> {
