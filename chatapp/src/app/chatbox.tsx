@@ -6,9 +6,10 @@ const SOCKET_SERVER_URL = 'http://localhost:3001';
 
 export default function ChatBox() {
   const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
-  const [messages, setMessages] = useState<string[]>([]);
   const [username, setUsername] = useState('');
   const [draftMessage, setDraftMessage] = useState('');
+  const [userMessages, setUserMessages] = useState<string[]>([]);
+  const [receivedMessages, setReceivedMessages] = useState<string[]>([]);
 
   useEffect(() => {
     // get session cookie
@@ -28,7 +29,7 @@ export default function ChatBox() {
     };
     ws.onmessage = (evt) => {
       console.log(evt.data);
-      setMessages((prevMessages) => [...prevMessages, evt.data]);
+      setReceivedMessages((prevMessages) => [...prevMessages, evt.data]);
     };
     setWebSocket(ws);
 
@@ -46,7 +47,8 @@ export default function ChatBox() {
       };
 
       webSocket.send(JSON.stringify(messageFormat));
-      setMessages([...messages, `You: ${draftMessage}`]);
+
+      setUserMessages([...userMessages, `You: ${draftMessage}`]);
       setDraftMessage('');
     }
   };
@@ -64,8 +66,13 @@ export default function ChatBox() {
       <h3 className="text-center">chatbox</h3>
 
       <div className="flex flex-col bg-white">
-        {messages.map((msg, index) => (
+        {receivedMessages.map((msg, index) => (
           <div className="text-black" key={index}>
+            {msg}
+          </div>
+        ))}
+        {userMessages.map((msg, index) => (
+          <div className="text-sky-500" key={index}>
             {msg}
           </div>
         ))}
