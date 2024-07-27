@@ -68,7 +68,7 @@ export default function ChatBox() {
     <div className="space-y-5">
       <h3 className="text-center">chatbox</h3>
 
-      <div className="flex flex-col bg-white">
+      <div className="flex flex-col bg-white py-5 px-1 space-y-3">
         {Messages.map((msg, index) => (
           <MessageBubble message={msg} key={index} />
         ))}
