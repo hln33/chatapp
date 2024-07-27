@@ -71,10 +71,8 @@ export default function ChatBox() {
   };
 
   return (
-    <div className="space-y-5">
-      <h3 className="text-center">chatbox</h3>
-
-      <div className="flex flex-col bg-white py-5 px-1 space-y-3">
+    <div className="space-y-5 w-80">
+      <div className="flex flex-col bg-white py-5 px-2 space-y-3 rounded-md">
         {Messages.map((msg, index) => (
           <MessageBubble message={msg} key={index} />
         ))}
@@ -82,8 +80,8 @@ export default function ChatBox() {
 
       <form className="space-y-3 flex flex-col" onSubmit={sendMessage}>
         <input
-          className="text-black"
           required
+          className="text-black px-3"
           type="text"
           placeholder="username"
           value={username}
@@ -93,8 +91,8 @@ export default function ChatBox() {
           }
         />
         <input
-          className="text-black"
           required
+          className="text-black px-3"
           type="text"
           placeholder="message"
           value={draftMessage}

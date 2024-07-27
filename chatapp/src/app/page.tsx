@@ -9,7 +9,7 @@ export default function Home() {
   //   .catch((e) => console.error(e));
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="flex flex-col items-center justify-center p-24 space-y-3">
       <h1>Welcome to my chat app</h1>
       <ChatBox />
     </main>
