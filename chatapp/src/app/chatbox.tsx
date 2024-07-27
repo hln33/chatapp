@@ -4,12 +4,16 @@ import { ChangeEvent, Dispatch, FormEvent, useEffect, useState } from 'react';
 
 const SOCKET_SERVER_URL = 'http://localhost:3001';
 
+type Message = {
+  text: string;
+  fromCurrentUser: boolean;
+};
+
 export default function ChatBox() {
   const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
   const [username, setUsername] = useState('');
   const [draftMessage, setDraftMessage] = useState('');
-  const [userMessages, setUserMessages] = useState<string[]>([]);
-  const [receivedMessages, setReceivedMessages] = useState<string[]>([]);
+  const [Messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
     // get session cookie
@@ -29,7 +33,10 @@ export default function ChatBox() {
     };
     ws.onmessage = (evt) => {
       console.log(evt.data);
-      setReceivedMessages((prevMessages) => [...prevMessages, evt.data]);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: evt.data, fromCurrentUser: false },
+      ]);
     };
     setWebSocket(ws);
 
@@ -48,7 +55,10 @@ export default function ChatBox() {
 
       webSocket.send(JSON.stringify(messageFormat));
 
-      setUserMessages([...userMessages, `You: ${draftMessage}`]);
+      setMessages([
+        ...Messages,
+        { text: `You: ${draftMessage}`, fromCurrentUser: true },
+      ]);
       setDraftMessage('');
     }
   };
@@ -66,14 +76,9 @@ export default function ChatBox() {
       <h3 className="text-center">chatbox</h3>
 
       <div className="flex flex-col bg-white">
-        {receivedMessages.map((msg, index) => (
-          <div className="text-black" key={index}>
-            {msg}
-          </div>
-        ))}
-        {userMessages.map((msg, index) => (
-          <div className="text-sky-500" key={index}>
-            {msg}
+        {Messages.map((msg, index) => (
+          <div className="flex justify-start" key={index}>
+            <div className="text-black">{msg.text}</div>
           </div>
         ))}
       </div>
