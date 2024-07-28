@@ -16,11 +16,11 @@ use uuid::Uuid;
 use web_socket::{ws_handler, UserMessage};
 
 mod session;
-pub mod web_socket;
+mod web_socket;
 
 const FRONT_END_URL: &str = "http://localhost:3000";
 
-pub struct AppState {
+struct AppState {
     users: Mutex<HashMap<String, UserSession>>,
     tx: broadcast::Sender<(Uuid, UserMessage)>,
 }
