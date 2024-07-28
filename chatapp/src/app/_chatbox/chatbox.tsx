@@ -3,6 +3,7 @@
 import { ChangeEvent, Dispatch, FormEvent, useEffect, useState } from 'react';
 import { Message } from './types';
 import MessageBubble from './messageBubble';
+import ImageUpload from './imageUpload';
 
 const SOCKET_SERVER_URL = 'http://localhost:3001';
 
@@ -25,10 +26,7 @@ export default function ChatBox() {
     ws.onopen = () => console.log('web socket opened');
     ws.onclose = () => console.log('web socket closed');
     ws.onmessage = (evt) => {
-      console.log(evt.data);
-
       const message: Message = JSON.parse(evt.data);
-
       setMessages((prevMessages) => [
         ...prevMessages,
         {
@@ -101,6 +99,9 @@ export default function ChatBox() {
             e.currentTarget.setCustomValidity('Message must not be blank')
           }
         />
+
+        <ImageUpload />
+
         <button className="bg-cyan-400" type="submit">
           Send
         </button>
