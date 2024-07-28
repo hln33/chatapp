@@ -30,9 +30,8 @@ pub async fn ws_handler(
 }
 
 async fn handle_socket(socket: WebSocket, state: Arc<AppState>) {
-    let (mut sender, mut reciever) = socket.split();
-
     let client_id = Uuid::new_v4();
+    let (mut sender, mut reciever) = socket.split();
 
     // listen for broadcast messages and relay the message to this socket
     let mut rx = state.tx.subscribe();

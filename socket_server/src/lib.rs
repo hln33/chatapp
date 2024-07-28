@@ -8,7 +8,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
-use tokio::{signal, sync::broadcast};
+use tokio::{net::ToSocketAddrs, signal, sync::broadcast};
 use tower_http::{cors::CorsLayer, trace::TraceLayer};
 
 use session::{create_session_handler, UserSession};
@@ -16,17 +16,16 @@ use uuid::Uuid;
 use web_socket::{ws_handler, UserMessage};
 
 mod session;
-mod web_socket;
+pub mod web_socket;
 
 const FRONT_END_URL: &str = "http://localhost:3000";
-const LISTENER_ADDR: &str = "127.0.0.1:3001";
 
-struct AppState {
+pub struct AppState {
     users: Mutex<HashMap<String, UserSession>>,
     tx: broadcast::Sender<(Uuid, UserMessage)>,
 }
 
-pub async fn start_server() {
+pub async fn start_server<T: ToSocketAddrs>(listener_addr: T) {
     let (tx, _rx) = broadcast::channel(100);
     let app_state = Arc::new(AppState {
         users: Mutex::new(HashMap::new()),
@@ -44,7 +43,7 @@ pub async fn start_server() {
         .with_state(app_state)
         .layer(cors)
         .layer(TraceLayer::new_for_http());
-    let listener = tokio::net::TcpListener::bind(LISTENER_ADDR).await.unwrap();
+    let listener = tokio::net::TcpListener::bind(listener_addr).await.unwrap();
 
     axum::serve(
         listener,
