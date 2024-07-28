@@ -33,19 +33,6 @@ export default function ImageUpload({ onImageUpload, imageURL }: Props) {
 
   return (
     <>
-      {imageURL && (
-        <div className="bg-white border-t-2 p-5">
-          <Image
-            className="w-auto h-auto"
-            src={`${SERVER_URL}/${imageURL}`}
-            alt="preview"
-            width={0}
-            height={0}
-            unoptimized // unoptimize for higher quality image
-          />
-        </div>
-      )}
-
       <label
         className="cursor-pointer absolute z-10 right-1"
         htmlFor="file-input"
@@ -59,6 +46,19 @@ export default function ImageUpload({ onImageUpload, imageURL }: Props) {
           onChange={handleImageChange}
         />
       </label>
+
+      {imageURL && (
+        <div className="bg-white border-t-2 p-5">
+          <Image
+            className="w-auto h-auto"
+            src={`${SERVER_URL}/${imageURL}`}
+            alt="preview"
+            width={0}
+            height={0}
+            unoptimized // unoptimize for higher quality image
+          />
+        </div>
+      )}
     </>
   );
 }
