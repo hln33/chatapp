@@ -17,7 +17,7 @@ export default function ImageUpload() {
         body: formData,
       });
 
-      const data = await res.text;
+      const data = await res.text();
       console.log(data);
     } catch (err) {
       console.error('Error uploading image', err);
