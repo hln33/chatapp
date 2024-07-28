@@ -8,6 +8,7 @@ type Props = {
 
 export default function MessageBubble({ message }: Props) {
   const alignment = message.fromCurrentUser ? 'justify-start' : 'justify-end';
+  const textAlignment = message.fromCurrentUser ? 'text-left' : 'text-right';
   const color = message.fromCurrentUser
     ? 'text-white bg-blue-500'
     : 'text-black bg-gray-300';
@@ -19,10 +20,12 @@ export default function MessageBubble({ message }: Props) {
     <div className={`flex ${alignment}`}>
       <div className="">
         {!message.fromCurrentUser && (
-          <p className="pr-2 text-right text-slate-400">{message.username}</p>
+          <p className={`pr-2 ${textAlignment} text-slate-400`}>
+            {message.username}
+          </p>
         )}
         <div className={`p-3 max-w-xs ${color} ${roundedCorners}`}>
-          <p>{message.text}</p>
+          <p className={textAlignment}>{message.text}</p>
           {message.image_url && (
             <Image
               src={`${SERVER_URL}/${message.image_url}`}
