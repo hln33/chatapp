@@ -43,7 +43,20 @@ export default function ImageUpload({ onImageUpload, imageURL }: Props) {
           unoptimized // unoptimize for higher quality image
         />
       )}
-      <input type="file" ref={fileInputRef} onChange={handleImageChange} />
+
+      <label
+        className="cursor-pointer absolute z-10 right-0"
+        htmlFor="file-input"
+      >
+        📎
+        <input
+          className="hidden"
+          type="file"
+          id="file-input"
+          ref={fileInputRef}
+          onChange={handleImageChange}
+        />
+      </label>
     </>
   );
 }

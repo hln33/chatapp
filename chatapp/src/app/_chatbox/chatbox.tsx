@@ -63,19 +63,22 @@ export default function ChatBox() {
             e.currentTarget.setCustomValidity('Username must not be blank')
           }
         />
-        <input
-          required
-          className="text-black px-3"
-          type="text"
-          placeholder="message"
-          value={draftMessage}
-          onChange={(e) => handleTextInputChange(e, setDraftMessage)}
-          onInvalid={(e) =>
-            e.currentTarget.setCustomValidity('Message must not be blank')
-          }
-        />
 
-        <ImageUpload onImageUpload={handleImageUpload} imageURL={imageURL} />
+        <div className="flex relative">
+          <input
+            required
+            className="flex-1 text-black px-3 z-0"
+            type="text"
+            placeholder="message"
+            value={draftMessage}
+            onChange={(e) => handleTextInputChange(e, setDraftMessage)}
+            onInvalid={(e) =>
+              e.currentTarget.setCustomValidity('Message must not be blank')
+            }
+          />
+
+          <ImageUpload onImageUpload={handleImageUpload} imageURL={imageURL} />
+        </div>
 
         <button className="bg-cyan-400" type="submit">
           Send
