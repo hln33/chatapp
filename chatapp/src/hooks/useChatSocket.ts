@@ -1,14 +1,14 @@
 import { Message } from "@/app/_chatbox/types";
+import { SERVER_URL } from "@/lib/constants";
 import { useEffect, useState } from "react";
 
-const SOCKET_SERVER_URL = 'http://localhost:3001';
-
-export default function useChatSocket() {
+// eslint-disable-next-line no-unused-vars
+export default function useChatSocket(): { messages: Message[], sendMessage: (message: Message) => void } {
   const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
-    const ws = new WebSocket(`${SOCKET_SERVER_URL}/ws`);
+    const ws = new WebSocket(`${SERVER_URL}/ws`);
     ws.onopen = () => console.log('web socket opened');
     ws.onclose = () => console.log('web socket closed');
     ws.onmessage = (evt) => {

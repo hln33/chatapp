@@ -1,6 +1,8 @@
+import { SERVER_URL } from "./constants";
+
 export const uploadImage = async (formData: FormData): Promise<string | null> => {
   try {
-    const res = await fetch('http://localhost:3001/file_upload', {
+    const res = await fetch(`${SERVER_URL}/file_upload`, {
       method: 'POST',
       body: formData,
     });

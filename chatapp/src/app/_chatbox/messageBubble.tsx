@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { SERVER_URL } from '@/lib/constants';
 import { Message } from './types';
 
 type Props = {
@@ -24,7 +25,7 @@ export default function MessageBubble({ message }: Props) {
           <p>{message.text}</p>
           {message.image_url && (
             <Image
-              src={`http://localhost:3001/${message.image_url}`}
+              src={`${SERVER_URL}/${message.image_url}`}
               alt="image"
               width={200}
               height={200}

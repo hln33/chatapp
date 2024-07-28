@@ -1,6 +1,7 @@
 import { ChangeEvent, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { uploadImage } from '@/lib/api';
+import { SERVER_URL } from '@/lib/constants';
 
 type Props = {
   // eslint-disable-next-line no-unused-vars
@@ -35,7 +36,7 @@ export default function ImageUpload({ onImageUpload, imageURL }: Props) {
       {imageURL && (
         <Image
           className="w-auto h-auto"
-          src={`http://localhost:3001/${imageURL}`}
+          src={`${SERVER_URL}/${imageURL}`}
           alt="preview"
           width={0}
           height={0}
