@@ -19,12 +19,15 @@ mod tests {
         tracing_subscriber::registry().with(stdout_log).init();
     }
 
-    #[tokio::test]
-    async fn send_message() {
+    async fn start_test_server() {
         init_logging();
-
         tokio::spawn(start_server(TEST_SERVER_ADDR)).into_future();
         tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+    }
+
+    #[tokio::test]
+    async fn send_message() {
+        start_test_server().await;
 
         let request = Request::builder()
             .header("Origin", format!("http://{TEST_REQUEST_HOST}"))
