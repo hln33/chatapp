@@ -10,7 +10,7 @@ use axum::{
 };
 use file_upload::file_upload_handler;
 use tokio::{net::ToSocketAddrs, signal, sync::broadcast};
-use tower_http::{cors::CorsLayer, trace::TraceLayer};
+use tower_http::{cors::CorsLayer, services::ServeDir, trace::TraceLayer};
 
 use session::{create_session_handler, UserSession};
 use uuid::Uuid;
@@ -43,6 +43,7 @@ fn app() -> Router {
         .route("/session", post(create_session_handler))
         .route("/ws", get(ws_handler))
         .route("/file_upload", post(file_upload_handler))
+        .nest_service("/uploads", ServeDir::new("public/uploads"))
         .with_state(app_state)
         .layer(cors)
         .layer(TraceLayer::new_for_http())

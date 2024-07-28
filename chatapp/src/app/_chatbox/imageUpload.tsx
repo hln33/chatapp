@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 
 const uploadImage = async (formData: FormData): Promise<string | null> => {
@@ -22,10 +22,25 @@ const uploadImage = async (formData: FormData): Promise<string | null> => {
 type Props = {
   // eslint-disable-next-line no-unused-vars
   onImageUpload: (imageURL: string) => void;
+  clearImagePreview: boolean;
 };
 
-export default function ImageUpload({ onImageUpload }: Props) {
+export default function ImageUpload({
+  onImageUpload,
+  clearImagePreview,
+}: Props) {
   const [imageURL, setImageURL] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (clearImagePreview) {
+      setImageURL('');
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  }, [clearImagePreview]);
 
   const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files === null) return;
@@ -54,7 +69,7 @@ export default function ImageUpload({ onImageUpload }: Props) {
           alt="preview"
         />
       )}
-      <input type="file" onChange={handleImageChange} />
+      <input type="file" ref={fileInputRef} onChange={handleImageChange} />
     </>
   );
 }

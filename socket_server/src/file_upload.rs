@@ -43,5 +43,5 @@ async fn create_file(file_name: &str, bytes: Bytes) -> String {
         .await
         .expect("file writing should be successful");
 
-    format!("/uploads/{file_name}")
+    format!("uploads/{file_name}")
 }

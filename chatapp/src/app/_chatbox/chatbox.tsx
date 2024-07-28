@@ -12,6 +12,7 @@ export default function ChatBox() {
   const [username, setUsername] = useState('');
   const [draftMessage, setDraftMessage] = useState('');
   const [imageURL, setImageURL] = useState<string | null>();
+  const [clearImagePreview, setClearImagePreview] = useState(false);
   const [Messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
@@ -30,8 +31,6 @@ export default function ChatBox() {
     ws.onclose = () => console.log('web socket closed');
     ws.onmessage = (evt) => {
       const message: Message = JSON.parse(evt.data);
-      console.log(message);
-
       setMessages((prevMessages) => [
         ...prevMessages,
         {
@@ -69,6 +68,8 @@ export default function ChatBox() {
         },
       ]);
       setDraftMessage('');
+      setImageURL(null);
+      setClearImagePreview(true);
     }
   };
 
@@ -82,6 +83,7 @@ export default function ChatBox() {
 
   const handleImageUpload = (imageURL: string) => {
     setImageURL(imageURL);
+    setClearImagePreview(false);
   };
 
   return (
@@ -116,7 +118,10 @@ export default function ChatBox() {
           }
         />
 
-        <ImageUpload onImageUpload={handleImageUpload} />
+        <ImageUpload
+          onImageUpload={handleImageUpload}
+          clearImagePreview={clearImagePreview}
+        />
 
         <button className="bg-cyan-400" type="submit">
           Send
