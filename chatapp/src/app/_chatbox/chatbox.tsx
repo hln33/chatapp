@@ -64,7 +64,7 @@ export default function ChatBox() {
           }
         />
 
-        <div className="flex relative">
+        <div className="flex flex-col relative">
           <input
             required
             className="flex-1 text-black px-3 z-0"
