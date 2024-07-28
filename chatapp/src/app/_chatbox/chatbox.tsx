@@ -10,8 +10,7 @@ import useChatSocket from '@/hooks/useChatSocket';
 export default function ChatBox() {
   const [username, setUsername] = useState('');
   const [draftMessage, setDraftMessage] = useState('');
-  const [imageURL, setImageURL] = useState<string | null>();
-  const [clearImagePreview, setClearImagePreview] = useState(false);
+  const [imageURL, setImageURL] = useState<string | null>(null);
   const { messages, sendMessage } = useChatSocket();
   useSession();
 
@@ -29,7 +28,6 @@ export default function ChatBox() {
 
       setDraftMessage('');
       setImageURL(null);
-      setClearImagePreview(true);
     }
   };
 
@@ -43,7 +41,6 @@ export default function ChatBox() {
 
   const handleImageUpload = (imageURL: string) => {
     setImageURL(imageURL);
-    setClearImagePreview(false);
   };
 
   return (
@@ -78,10 +75,7 @@ export default function ChatBox() {
           }
         />
 
-        <ImageUpload
-          onImageUpload={handleImageUpload}
-          clearImagePreview={clearImagePreview}
-        />
+        <ImageUpload onImageUpload={handleImageUpload} imageURL={imageURL} />
 
         <button className="bg-cyan-400" type="submit">
           Send

@@ -1,28 +1,21 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { uploadImage } from '@/lib/api';
 
 type Props = {
   // eslint-disable-next-line no-unused-vars
   onImageUpload: (imageURL: string) => void;
-  clearImagePreview: boolean;
+  imageURL: string | null;
 };
 
-export default function ImageUpload({
-  onImageUpload,
-  clearImagePreview,
-}: Props) {
-  const [previewImageURL, setPreviewImageURL] = useState('');
+export default function ImageUpload({ onImageUpload, imageURL }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (!clearImagePreview) return;
-
-    setPreviewImageURL('');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-  }, [clearImagePreview]);
+  }, [imageURL]);
 
   const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files === null) return;
@@ -35,20 +28,18 @@ export default function ImageUpload({
     if (serverImageURL) {
       onImageUpload(serverImageURL);
     }
-
-    const imageURL = URL.createObjectURL(file);
-    setPreviewImageURL(imageURL);
   };
 
   return (
     <>
-      {previewImageURL && (
+      {imageURL && (
         <Image
           className="w-auto h-auto"
-          src={previewImageURL}
+          src={`http://localhost:3001/${imageURL}`}
+          alt="preview"
           width={0}
           height={0}
-          alt="preview"
+          unoptimized // unoptimize for higher quality image
         />
       )}
       <input type="file" ref={fileInputRef} onChange={handleImageChange} />
