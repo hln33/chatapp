@@ -1,21 +1,30 @@
 import { ChangeEvent, useState } from 'react';
 import Image from 'next/image';
 
-const uploadImage = async (formData: FormData) => {
+const uploadImage = async (formData: FormData): Promise<string | null> => {
   try {
     const res = await fetch('http://localhost:3001/file_upload', {
       method: 'POST',
       body: formData,
     });
 
-    const data = await res.text();
-    console.log(data);
+    const imageURL = await res.text();
+    console.log(imageURL);
+
+    return imageURL;
   } catch (err) {
     console.error('Error uploading image', err);
   }
+
+  return null;
 };
 
-export default function ImageUpload() {
+type Props = {
+  // eslint-disable-next-line no-unused-vars
+  onImageUpload: (imageURL: string) => void;
+};
+
+export default function ImageUpload({ onImageUpload }: Props) {
   const [imageURL, setImageURL] = useState('');
 
   const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -23,9 +32,12 @@ export default function ImageUpload() {
 
     const file = e.target.files[0];
     const formData = new FormData();
-    formData.append('username', 'test_user');
     formData.append('image', file);
-    await uploadImage(formData);
+
+    const serverImageURL = await uploadImage(formData);
+    if (serverImageURL) {
+      onImageUpload(serverImageURL);
+    }
 
     const imageURL = URL.createObjectURL(file);
     setImageURL(imageURL);

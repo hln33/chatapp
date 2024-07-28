@@ -18,6 +18,7 @@ use crate::AppState;
 pub struct UserMessage {
     username: String,
     text: String,
+    image_url: Option<String>,
 }
 
 pub async fn ws_handler(

@@ -20,7 +20,8 @@ export default function MessageBubble({ message }: Props) {
           <p className="pr-2 text-right text-slate-400">{message.username}</p>
         )}
         <div className={`p-3 max-w-xs ${color} ${roundedCorners}`}>
-          {message.text}
+          <p>{message.image_url}</p>
+          <p>{message.text}</p>
         </div>
       </div>
     </div>

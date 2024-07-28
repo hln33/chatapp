@@ -11,6 +11,7 @@ export default function ChatBox() {
   const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
   const [username, setUsername] = useState('');
   const [draftMessage, setDraftMessage] = useState('');
+  const [imageURL, setImageURL] = useState<string | null>();
   const [Messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
@@ -29,12 +30,15 @@ export default function ChatBox() {
     ws.onclose = () => console.log('web socket closed');
     ws.onmessage = (evt) => {
       const message: Message = JSON.parse(evt.data);
+      console.log(message);
+
       setMessages((prevMessages) => [
         ...prevMessages,
         {
           fromCurrentUser: false,
           username: message.username,
           text: message.text,
+          image_url: message.image_url,
         },
       ]);
     };
@@ -51,12 +55,18 @@ export default function ChatBox() {
       const messageFormat = {
         username,
         text: draftMessage,
+        image_url: imageURL,
       };
       webSocket.send(JSON.stringify(messageFormat));
 
       setMessages([
         ...Messages,
-        { fromCurrentUser: true, username, text: draftMessage },
+        {
+          fromCurrentUser: true,
+          username,
+          text: draftMessage,
+          image_url: imageURL ?? '',
+        },
       ]);
       setDraftMessage('');
     }
@@ -68,6 +78,10 @@ export default function ChatBox() {
   ) => {
     setState(e.target.value);
     e.currentTarget.setCustomValidity('');
+  };
+
+  const handleImageUpload = (imageURL: string) => {
+    setImageURL(imageURL);
   };
 
   return (
@@ -102,7 +116,7 @@ export default function ChatBox() {
           }
         />
 
-        <ImageUpload />
+        <ImageUpload onImageUpload={handleImageUpload} />
 
         <button className="bg-cyan-400" type="submit">
           Send
