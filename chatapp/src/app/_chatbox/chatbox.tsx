@@ -21,7 +21,9 @@ export default function ChatBox() {
     })
       .then((res) => console.log(res))
       .catch((err) => console.error(err));
+  }, []);
 
+  useEffect(() => {
     const ws = new WebSocket(`${SOCKET_SERVER_URL}/ws`);
     ws.onopen = () => console.log('web socket opened');
     ws.onclose = () => console.log('web socket closed');
