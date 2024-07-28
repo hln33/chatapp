@@ -1,79 +1,39 @@
 'use client';
 
-import { ChangeEvent, Dispatch, FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, Dispatch, FormEvent, useState } from 'react';
 import { Message } from './types';
 import MessageBubble from './messageBubble';
 import ImageUpload from './imageUpload';
-
-const SOCKET_SERVER_URL = 'http://localhost:3001';
+import useSession from '@/hooks/useSession';
+import useChatSocket from '@/hooks/useChatSocket';
 
 export default function ChatBox() {
-  const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
   const [username, setUsername] = useState('');
   const [draftMessage, setDraftMessage] = useState('');
   const [imageURL, setImageURL] = useState<string | null>();
   const [clearImagePreview, setClearImagePreview] = useState(false);
-  const [Messages, setMessages] = useState<Message[]>([]);
+  const { messages, sendMessage } = useChatSocket();
+  useSession();
 
-  useEffect(() => {
-    // get session cookie
-    fetch(`${SOCKET_SERVER_URL}/session`, {
-      method: 'POST',
-      credentials: 'include',
-    })
-      .then((res) => console.log(res))
-      .catch((err) => console.error(err));
-  }, []);
-
-  useEffect(() => {
-    const ws = new WebSocket(`${SOCKET_SERVER_URL}/ws`);
-    ws.onopen = () => console.log('web socket opened');
-    ws.onclose = () => console.log('web socket closed');
-    ws.onmessage = (evt) => {
-      const message: Message = JSON.parse(evt.data);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          fromCurrentUser: false,
-          username: message.username,
-          text: message.text,
-          image_url: message.image_url,
-        },
-      ]);
-    };
-    setWebSocket(ws);
-
-    return () => {
-      ws.close();
-    };
-  }, []);
-
-  const sendMessage = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (webSocket && draftMessage && username) {
-      const messageFormat = {
+
+    if (draftMessage && username) {
+      const message: Message = {
+        fromCurrentUser: true,
         username,
         text: draftMessage,
-        image_url: imageURL,
+        image_url: imageURL ?? '',
       };
-      webSocket.send(JSON.stringify(messageFormat));
+      sendMessage(message);
 
-      setMessages([
-        ...Messages,
-        {
-          fromCurrentUser: true,
-          username,
-          text: draftMessage,
-          image_url: imageURL ?? '',
-        },
-      ]);
       setDraftMessage('');
       setImageURL(null);
       setClearImagePreview(true);
     }
   };
 
-  const handleInputChange = (
+  const handleTextInputChange = (
     e: ChangeEvent<HTMLInputElement>,
     setState: Dispatch<string>
   ) => {
@@ -89,19 +49,19 @@ export default function ChatBox() {
   return (
     <div className="space-y-5 w-80">
       <div className="flex flex-col bg-white py-5 px-2 space-y-3 rounded-md">
-        {Messages.map((msg, index) => (
+        {messages.map((msg, index) => (
           <MessageBubble message={msg} key={index} />
         ))}
       </div>
 
-      <form className="space-y-3 flex flex-col" onSubmit={sendMessage}>
+      <form className="space-y-3 flex flex-col" onSubmit={handleSubmit}>
         <input
           required
           className="text-black px-3"
           type="text"
           placeholder="username"
           value={username}
-          onChange={(e) => handleInputChange(e, setUsername)}
+          onChange={(e) => handleTextInputChange(e, setUsername)}
           onInvalid={(e) =>
             e.currentTarget.setCustomValidity('Username must not be blank')
           }
@@ -112,7 +72,7 @@ export default function ChatBox() {
           type="text"
           placeholder="message"
           value={draftMessage}
-          onChange={(e) => handleInputChange(e, setDraftMessage)}
+          onChange={(e) => handleTextInputChange(e, setDraftMessage)}
           onInvalid={(e) =>
             e.currentTarget.setCustomValidity('Message must not be blank')
           }

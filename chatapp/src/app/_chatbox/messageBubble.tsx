@@ -21,14 +21,15 @@ export default function MessageBubble({ message }: Props) {
           <p className="pr-2 text-right text-slate-400">{message.username}</p>
         )}
         <div className={`p-3 max-w-xs ${color} ${roundedCorners}`}>
-          <p>{message.image_url}</p>
-          <Image
-            src={`http://localhost:3001/${message.image_url}`}
-            alt="image"
-            width={200}
-            height={200}
-          />
           <p>{message.text}</p>
+          {message.image_url && (
+            <Image
+              src={`http://localhost:3001/${message.image_url}`}
+              alt="image"
+              width={200}
+              height={200}
+            />
+          )}
         </div>
       </div>
     </div>

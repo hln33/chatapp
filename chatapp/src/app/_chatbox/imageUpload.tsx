@@ -1,23 +1,6 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-
-const uploadImage = async (formData: FormData): Promise<string | null> => {
-  try {
-    const res = await fetch('http://localhost:3001/file_upload', {
-      method: 'POST',
-      body: formData,
-    });
-
-    const imageURL = await res.text();
-    console.log(imageURL);
-
-    return imageURL;
-  } catch (err) {
-    console.error('Error uploading image', err);
-  }
-
-  return null;
-};
+import { uploadImage } from '@/lib/api';
 
 type Props = {
   // eslint-disable-next-line no-unused-vars
@@ -29,16 +12,15 @@ export default function ImageUpload({
   onImageUpload,
   clearImagePreview,
 }: Props) {
-  const [imageURL, setImageURL] = useState('');
+  const [previewImageURL, setPreviewImageURL] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (clearImagePreview) {
-      setImageURL('');
+    if (!clearImagePreview) return;
 
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
+    setPreviewImageURL('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   }, [clearImagePreview]);
 
@@ -55,15 +37,15 @@ export default function ImageUpload({
     }
 
     const imageURL = URL.createObjectURL(file);
-    setImageURL(imageURL);
+    setPreviewImageURL(imageURL);
   };
 
   return (
     <>
-      {imageURL && (
+      {previewImageURL && (
         <Image
           className="w-auto h-auto"
-          src={imageURL}
+          src={previewImageURL}
           width={0}
           height={0}
           alt="preview"
