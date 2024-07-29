@@ -24,6 +24,7 @@ export default function ChatBox() {
         text: draftMessage,
         image_url: imageURL ?? '',
       };
+      console.log(message);
       sendMessage(message);
 
       setDraftMessage('');
@@ -32,7 +33,7 @@ export default function ChatBox() {
   };
 
   const handleTextInputChange = (
-    e: ChangeEvent<HTMLInputElement>,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     setState: Dispatch<string>
   ) => {
     setState(e.target.value);
@@ -65,10 +66,9 @@ export default function ChatBox() {
         />
 
         <div className="flex flex-col relative">
-          <input
+          <textarea
             required
-            className="flex-1 text-black px-3 z-0"
-            type="text"
+            className="flex-1 text-black px-3 z-0 break-words"
             placeholder="message"
             value={draftMessage}
             onChange={(e) => handleTextInputChange(e, setDraftMessage)}

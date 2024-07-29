@@ -16,16 +16,21 @@ export default function MessageBubble({ message }: Props) {
     ? 'rounded-r-2xl rounded-tl-2xl'
     : 'rounded-l-2xl rounded-tr-2xl';
 
+  const userName = !message.fromCurrentUser && (
+    <p className={`pr-2 ${textAlignment} text-slate-400`}>{message.username}</p>
+  );
+  const text = message.text.split('\n').map((line, index) => (
+    <p className={textAlignment} key={index}>
+      {line}
+    </p>
+  ));
+
   return (
     <div className={`flex ${alignment}`}>
       <div className="">
-        {!message.fromCurrentUser && (
-          <p className={`pr-2 ${textAlignment} text-slate-400`}>
-            {message.username}
-          </p>
-        )}
+        {userName}
         <div className={`p-3 max-w-xs ${color} ${roundedCorners}`}>
-          <p className={textAlignment}>{message.text}</p>
+          {text}
           {message.image_url && (
             <Image
               src={`${SERVER_URL}/${message.image_url}`}
