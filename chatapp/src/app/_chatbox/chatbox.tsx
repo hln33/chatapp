@@ -46,7 +46,7 @@ export default function ChatBox() {
 
   return (
     <div className="space-y-5 w-80">
-      <div className="flex flex-col bg-white py-5 px-2 space-y-3 rounded-md">
+      <div className="flex flex-col bg-white h-72 w-50 py-5 px-2 space-y-3 overflow-y-scroll rounded-md">
         {messages.map((msg, index) => (
           <MessageBubble message={msg} key={index} />
         ))}
@@ -55,9 +55,9 @@ export default function ChatBox() {
       <form className="space-y-3 flex flex-col" onSubmit={handleSubmit}>
         <input
           required
-          className="text-black px-3 rounded-md"
+          className="input input-bordered"
           type="text"
-          placeholder="username"
+          placeholder="Username"
           value={username}
           onChange={(e) => handleTextInputChange(e, setUsername)}
           onInvalid={(e) =>
@@ -68,7 +68,7 @@ export default function ChatBox() {
         <div className="flex flex-col relative">
           <textarea
             required
-            className="flex-1 text-black px-3 rounded-md z-0 break-words"
+            className="textarea textarea-bordered"
             placeholder="message"
             value={draftMessage}
             onChange={(e) => handleTextInputChange(e, setDraftMessage)}
@@ -80,7 +80,7 @@ export default function ChatBox() {
           <ImageUpload onImageUpload={handleImageUpload} imageURL={imageURL} />
         </div>
 
-        <button className="bg-cyan-400 rounded-md" type="submit">
+        <button className="btn bg-cyan-400 text-white" type="submit">
           Send
         </button>
       </form>
