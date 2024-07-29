@@ -55,7 +55,7 @@ export default function ChatBox() {
       <form className="space-y-3 flex flex-col" onSubmit={handleSubmit}>
         <input
           required
-          className="text-black px-3"
+          className="text-black px-3 rounded-md"
           type="text"
           placeholder="username"
           value={username}
@@ -68,7 +68,7 @@ export default function ChatBox() {
         <div className="flex flex-col relative">
           <textarea
             required
-            className="flex-1 text-black px-3 z-0 break-words"
+            className="flex-1 text-black px-3 rounded-md z-0 break-words"
             placeholder="message"
             value={draftMessage}
             onChange={(e) => handleTextInputChange(e, setDraftMessage)}
@@ -80,7 +80,7 @@ export default function ChatBox() {
           <ImageUpload onImageUpload={handleImageUpload} imageURL={imageURL} />
         </div>
 
-        <button className="bg-cyan-400" type="submit">
+        <button className="bg-cyan-400 rounded-md" type="submit">
           Send
         </button>
       </form>
