@@ -25,25 +25,29 @@ describe('<ChatBox />', () => {
   });
 
   it('clears the message input upon send', async () => {
-    const user = userEvent.setup();
+    const username = 'Harry';
+    const message = 'This is my funny message!';
     render(<ChatBox />);
+    const user = userEvent.setup();
 
     const usernameInput = screen.getByTestId(
       'username-input'
     ) as HTMLInputElement;
     await user.click(usernameInput);
-    await user.keyboard('Harry');
-    expect(usernameInput.value).toEqual('Harry');
+    await user.keyboard(username);
+    expect(usernameInput.value).toEqual(username);
 
     const messageInput = screen.getByTestId(
       'message-input'
     ) as HTMLInputElement;
     await user.click(messageInput);
-    await user.keyboard('This is my funny message!');
-    expect(messageInput.value).toEqual('This is my funny message!');
+    await user.keyboard(message);
+    expect(messageInput.value).toEqual(message);
 
     const sendButton = screen.getByTestId('send-button');
     await user.click(sendButton);
+
+    expect(usernameInput.value).toEqual(username);
     expect(messageInput.value).toEqual('');
   });
 });
