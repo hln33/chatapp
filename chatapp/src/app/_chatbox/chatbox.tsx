@@ -1,17 +1,21 @@
 'use client';
 
 import { ChangeEvent, Dispatch, FormEvent, useState } from 'react';
-import useChatSocket from '@/hooks/useChatSocket';
 import useSession from '@/hooks/useSession';
 import { Message } from './types';
 import MessageBubble from './messageBubble';
 import ImageUpload from './imageUpload';
 
-export default function ChatBox() {
+type Props = {
+  messages: Message[];
+  // eslint-disable-next-line no-unused-vars
+  sendMessage: (message: Message) => void;
+};
+
+export default function ChatBox({ messages, sendMessage }: Props) {
   const [username, setUsername] = useState('');
   const [draftMessage, setDraftMessage] = useState('');
   const [imageURL, setImageURL] = useState<string | null>(null);
-  const { messages, sendMessage } = useChatSocket();
   useSession();
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {

@@ -2,10 +2,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ChatBox from '../chatbox';
+import useChatSocket from '@/hooks/useChatSocket';
 
 vi.mock('@/hooks/useChatSocket', () => ({
   default: () => ({
-    messages: [],
     sendMessage: vi.fn(),
   }),
 }));
@@ -17,18 +17,21 @@ describe('<ChatBox />', () => {
   });
 
   it('renders correctly', () => {
-    render(<ChatBox />);
+    const { sendMessage } = useChatSocket();
+
+    render(<ChatBox messages={[]} sendMessage={sendMessage} />);
 
     expect(screen.getByTestId('chat-window')).toBeDefined();
     expect(screen.getByTestId('username-input')).toBeDefined();
     expect(screen.getByTestId('message-input')).toBeDefined();
   });
 
-  it('clears the message input upon send', async () => {
+  it('handles message sending', async () => {
     const username = 'Harry';
     const message = 'This is my funny message!';
-    render(<ChatBox />);
     const user = userEvent.setup();
+    const { sendMessage } = useChatSocket();
+    render(<ChatBox messages={[]} sendMessage={sendMessage} />);
 
     const usernameInput = screen.getByTestId(
       'username-input'
@@ -49,5 +52,11 @@ describe('<ChatBox />', () => {
 
     expect(usernameInput.value).toEqual(username);
     expect(messageInput.value).toEqual('');
+    expect(sendMessage).toHaveBeenCalledWith({
+      fromCurrentUser: true,
+      username,
+      text: message,
+      image_url: '',
+    });
   });
 });
