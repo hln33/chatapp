@@ -24,7 +24,6 @@ export default function ChatBox() {
         text: draftMessage,
         image_url: imageURL ?? '',
       };
-      console.log(message);
       sendMessage(message);
 
       setDraftMessage('');
@@ -85,7 +84,11 @@ export default function ChatBox() {
           <ImageUpload onImageUpload={handleImageUpload} imageURL={imageURL} />
         </div>
 
-        <button className="btn bg-cyan-400 text-white" type="submit">
+        <button
+          data-testid="send-button"
+          className="btn bg-cyan-400 text-white"
+          type="submit"
+        >
           Send
         </button>
       </form>
