@@ -1,5 +1,5 @@
 import { Message } from "@/app/_chatbox/types";
-import { SERVER_URL } from "@/lib/constants";
+import { SOCKET_URL } from "@/lib/constants";
 import { useEffect, useState } from "react";
 
 // eslint-disable-next-line no-unused-vars
@@ -8,7 +8,7 @@ export default function useChatSocket(): { messages: Message[], sendMessage: (me
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
-    const ws = new WebSocket(`${SERVER_URL}/ws`);
+    const ws = new WebSocket(`${SOCKET_URL}/ws`);
     ws.onopen = () => console.log('web socket opened');
     ws.onclose = () => console.log('web socket closed');
     ws.onmessage = (evt) => {

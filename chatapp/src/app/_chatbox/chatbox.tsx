@@ -46,7 +46,10 @@ export default function ChatBox() {
 
   return (
     <div className="space-y-5 w-80">
-      <div className="flex flex-col bg-white h-72 w-50 py-5 px-2 space-y-3 overflow-y-scroll rounded-md">
+      <div
+        data-testid="chat-window"
+        className="flex flex-col bg-white h-72 w-50 py-5 px-2 space-y-3 overflow-y-scroll rounded-md"
+      >
         {messages.map((msg, index) => (
           <MessageBubble message={msg} key={index} />
         ))}
@@ -55,6 +58,7 @@ export default function ChatBox() {
       <form className="space-y-3 flex flex-col" onSubmit={handleSubmit}>
         <input
           required
+          data-testid="username-input"
           className="input input-bordered"
           type="text"
           placeholder="Username"
@@ -68,6 +72,7 @@ export default function ChatBox() {
         <div className="flex flex-col relative">
           <textarea
             required
+            data-testid="message-input"
             className="textarea textarea-bordered"
             placeholder="message"
             value={draftMessage}
