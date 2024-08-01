@@ -17,9 +17,7 @@ describe('<ChatBox />', () => {
   });
 
   it('renders correctly', () => {
-    const { sendMessage } = useChatSocket();
-
-    render(<ChatBox messages={[]} sendMessage={sendMessage} />);
+    render(<ChatBox messages={[]} sendMessage={vi.fn()} />);
 
     expect(screen.getByTestId('chat-window')).toBeDefined();
     expect(screen.getByTestId('username-input')).toBeDefined();

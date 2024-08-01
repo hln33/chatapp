@@ -34,21 +34,23 @@ export default function ImageUpload({ onImageUpload, imageURL }: Props) {
   return (
     <>
       <label
+        data-testid="file-input-label"
         className="cursor-pointer absolute z-10 right-1"
         htmlFor="file-input"
       >
         📎
         <input
+          data-testid="file-input"
+          id="file-input"
           className="hidden"
           type="file"
-          id="file-input"
           ref={fileInputRef}
           onChange={handleImageChange}
         />
       </label>
 
       {imageURL && (
-        <div className="bg-white border-t-2 p-5">
+        <div data-testid="images" className="bg-white border-t-2 p-5">
           <Image
             className="w-auto h-auto"
             src={`${SERVER_URL}/${imageURL}`}

@@ -30,9 +30,10 @@ export default function MessageBubble({ message }: Props) {
       <div>
         {userName}
         <div className={`p-3 max-w-xs ${color} ${roundedCorners}`}>
-          {text}
+          <span data-testid="message-text">{text}</span>
           {message.image_url && (
             <Image
+              data-testid="image"
               src={`${SERVER_URL}/${message.image_url}`}
               alt="image"
               width={200}
