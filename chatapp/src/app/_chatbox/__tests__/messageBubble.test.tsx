@@ -21,7 +21,7 @@ describe('<MessageBubble />', () => {
     cleanup();
   });
 
-  it('renders recieved messagecorrectly', () => {
+  it('renders recieved message correctly', () => {
     render(<MessageBubble message={TEST_RECIEVED_MSG} />);
 
     expect(screen.getByText(TEST_RECIEVED_MSG.username)).toBeDefined();
