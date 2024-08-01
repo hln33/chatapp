@@ -1,15 +1,11 @@
-import { cleanup, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import ImageUpload from '../imageUpload';
 import userEvent from '@testing-library/user-event';
 
 const TEST_IMAGE_URL = 'testURL/photo/1';
 
 describe('<ImageUpload />', () => {
-  afterEach(() => {
-    cleanup();
-  });
-
   it('renders correctly', () => {
     render(<ImageUpload imageURL={TEST_IMAGE_URL} onImageUpload={vi.fn()} />);
 

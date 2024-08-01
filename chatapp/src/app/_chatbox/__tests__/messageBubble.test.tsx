@@ -1,7 +1,7 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { Message } from '../types';
 import MessageBubble from '../messageBubble';
-import { cleanup, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 const TEST_RECIEVED_MSG: Message = {
   fromCurrentUser: false,
@@ -17,10 +17,6 @@ const TEST_USER_MSG: Message = {
 };
 
 describe('<MessageBubble />', () => {
-  afterEach(() => {
-    cleanup();
-  });
-
   it('renders recieved message correctly', () => {
     render(<MessageBubble message={TEST_RECIEVED_MSG} />);
 

@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ChatBox from '../chatbox';
 import useChatSocket from '@/hooks/useChatSocket';
@@ -12,10 +12,6 @@ vi.mock('@/hooks/useChatSocket', () => ({
 vi.mock('@/hooks/useSession');
 
 describe('<ChatBox />', () => {
-  afterEach(() => {
-    cleanup();
-  });
-
   it('renders correctly', () => {
     render(<ChatBox messages={[]} sendMessage={vi.fn()} />);
 
