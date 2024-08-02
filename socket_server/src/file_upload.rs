@@ -13,14 +13,13 @@ pub async fn file_upload_handler(mut multipart: Multipart) -> impl IntoResponse 
 
             let data = field.bytes().await.expect("image bytes should be valid");
             let file_url = create_file(&unique_file_name, data).await;
-
             return (StatusCode::OK, file_url);
         }
     }
 
     (
         StatusCode::INTERNAL_SERVER_ERROR,
-        String::from("File uploaded failed"),
+        String::from("File upload failed"),
     )
 }
 

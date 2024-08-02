@@ -16,4 +16,7 @@ tracing-subscriber = "0.3.18"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 uuid = "1.10.0"
+
+[dev-dependencies]
+reqwest = { version = "0.12.5", features=["multipart"] }
 tokio-tungstenite = "0.22"
