@@ -8,7 +8,7 @@ mod tests {
     const FILE_UPLOAD_ENDPOINT: &str = "file_upload";
 
     #[tokio::test]
-    async fn upload_file() -> Result<(), Box<dyn std::error::Error>> {
+    async fn upload_single_file() -> Result<(), Box<dyn std::error::Error>> {
         common::start_test_server().await;
 
         let image_bytes = std::fs::read(TEST_IMAGE_PATH)?;
@@ -23,7 +23,6 @@ mod tests {
             .multipart(form)
             .send()
             .await?;
-
         assert_eq!(response.status(), reqwest::StatusCode::OK);
 
         let image_url = response.text().await?;
