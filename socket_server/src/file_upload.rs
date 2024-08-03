@@ -16,27 +16,30 @@ fn generate_unique_file_name(file_name: &str) -> String {
 }
 
 // returns URL to newly created file
-async fn create_file(file_name: &str, bytes: Bytes) -> String {
+async fn create_file(file_name: &str, bytes: Bytes) -> Result<String, String> {
     let file_path = format!("./public/uploads/{file_name}");
-    let mut file = tokio::fs::File::create(&file_path)
-        .await
-        .expect("file creation should be successful");
 
-    file.write_all(&bytes)
-        .await
-        .expect("file writing should be successful");
-
-    format!("uploads/{file_name}")
+    match tokio::fs::File::create(&file_path).await {
+        Ok(mut file) => {
+            if (file.write_all(&bytes).await).is_err() {
+                return Err("File writing failed".to_string());
+            }
+            Ok(format!("uploads/{file_name}"))
+        }
+        Err(_) => Err("File creation failed".to_string()),
+    }
 }
 
-async fn upload_image(field: Field<'_>) -> Result<String, &str> {
+async fn upload_image(field: Field<'_>) -> Result<String, String> {
     match field.file_name() {
         Some(file_name) => {
             let unique_file_name = generate_unique_file_name(file_name);
             let data = field.bytes().await.expect("image bytes should be valid");
-            Ok(create_file(&unique_file_name, data).await)
+
+            let new_image_url = create_file(&unique_file_name, data).await?;
+            Ok(new_image_url)
         }
-        None => Err("Image should have filename"),
+        None => Err("Image should have filename".to_string()),
     }
 }
 
