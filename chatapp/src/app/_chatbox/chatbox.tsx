@@ -48,7 +48,7 @@ export default function ChatBox({ messages, sendMessage }: Props) {
   };
 
   return (
-    <div className="space-y-5 w-80">
+    <div className="space-y-5 w-96">
       <div
         data-testid="chat-window"
         className="flex flex-col bg-white h-72 w-50 py-5 px-2 space-y-3 overflow-y-scroll rounded-md"
