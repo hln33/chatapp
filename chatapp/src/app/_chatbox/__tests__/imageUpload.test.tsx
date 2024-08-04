@@ -7,15 +7,19 @@ const TEST_IMAGE_URL = 'testURL/photo/1';
 
 describe('<ImageUpload />', () => {
   it('renders correctly', () => {
-    render(<ImageUpload imageURL={TEST_IMAGE_URL} onImageUpload={vi.fn()} />);
+    render(
+      <ImageUpload imageURLs={[TEST_IMAGE_URL]} onImagesUpload={vi.fn()} />
+    );
 
     expect(screen.getByTestId('file-input-label')).toBeDefined();
     expect(screen.getByTestId('file-input')).toBeDefined();
-    expect(screen.getByTestId('images')).toBeDefined();
+
+    expect(screen.getByTestId('image')).toBeDefined();
+    expect(screen.getAllByTestId('image')).toHaveLength(1);
   });
 
   it('shows no images if there is no url provided', () => {
-    render(<ImageUpload imageURL={null} onImageUpload={vi.fn()} />);
+    render(<ImageUpload imageURLs={[]} onImagesUpload={vi.fn()} />);
 
     expect(screen.getByTestId('file-input-label')).toBeDefined();
     expect(screen.getByTestId('file-input')).toBeDefined();
@@ -28,7 +32,7 @@ describe('<ImageUpload />', () => {
     }));
     const user = userEvent.setup();
     const mockOnImageUpload = vi.fn();
-    render(<ImageUpload imageURL={null} onImageUpload={mockOnImageUpload} />);
+    render(<ImageUpload imageURLs={[]} onImagesUpload={mockOnImageUpload} />);
 
     const imageFile = new File(['hello'], 'hello.jpg', { type: 'image/jpg' });
     const imageInput = screen.getByTestId('file-input') as HTMLInputElement;

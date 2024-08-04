@@ -31,15 +31,16 @@ export default function MessageBubble({ message }: Props) {
         {userName}
         <div className={`p-3 max-w-xs ${color} ${roundedCorners}`}>
           <span data-testid="message-text">{text}</span>
-          {message.image_url && (
+          {message.image_urls.map((imageURL, index) => (
             <Image
+              key={index}
               data-testid="image"
-              src={`${SERVER_URL}/${message.image_url}`}
+              src={`${SERVER_URL}/${imageURL}`}
               alt="image"
               width={200}
               height={200}
             />
-          )}
+          ))}
         </div>
       </div>
     </div>

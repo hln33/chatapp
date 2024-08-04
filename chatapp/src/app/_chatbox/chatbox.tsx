@@ -15,7 +15,7 @@ type Props = {
 export default function ChatBox({ messages, sendMessage }: Props) {
   const [username, setUsername] = useState('');
   const [draftMessage, setDraftMessage] = useState('');
-  const [imageURL, setImageURL] = useState<string | null>(null);
+  const [imageURLs, setImageURLs] = useState<string[]>([]);
   useSession();
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -26,12 +26,12 @@ export default function ChatBox({ messages, sendMessage }: Props) {
         fromCurrentUser: true,
         username,
         text: draftMessage,
-        image_url: imageURL ?? '',
+        image_urls: imageURLs,
       };
       sendMessage(message);
 
       setDraftMessage('');
-      setImageURL(null);
+      setImageURLs([]);
     }
   };
 
@@ -43,8 +43,8 @@ export default function ChatBox({ messages, sendMessage }: Props) {
     e.currentTarget.setCustomValidity('');
   };
 
-  const handleImageUpload = (imageURL: string) => {
-    setImageURL(imageURL);
+  const handleImageUpload = (imageURLs: string[]) => {
+    setImageURLs(imageURLs);
   };
 
   return (
@@ -85,7 +85,10 @@ export default function ChatBox({ messages, sendMessage }: Props) {
             }
           />
 
-          <ImageUpload onImageUpload={handleImageUpload} imageURL={imageURL} />
+          <ImageUpload
+            onImagesUpload={handleImageUpload}
+            imageURLs={imageURLs}
+          />
         </div>
 
         <button

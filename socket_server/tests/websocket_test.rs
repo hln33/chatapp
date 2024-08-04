@@ -31,7 +31,7 @@ mod tests {
             .await
             .unwrap();
 
-        let json_str = r#"{"username":"harry","text":"hello","image_url":null}"#;
+        let json_str = r#"{"username":"harry","text":"hello","image_urls":[]}"#;
         send_socket
             .send(tungstenite::Message::text(json_str))
             .await

@@ -7,13 +7,13 @@ const TEST_RECIEVED_MSG: Message = {
   fromCurrentUser: false,
   username: 'Harry',
   text: 'hello world!',
-  image_url: 'test/photo/1',
+  image_urls: ['test/photo/1'],
 };
 const TEST_USER_MSG: Message = {
   fromCurrentUser: true,
   username: 'Tom',
   text: 'heyooo!',
-  image_url: 'test/photo/2',
+  image_urls: ['test/photo/2'],
 };
 
 describe('<MessageBubble />', () => {

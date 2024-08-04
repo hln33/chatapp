@@ -5,29 +5,30 @@ import { SERVER_URL } from '@/lib/constants';
 
 type Props = {
   // eslint-disable-next-line no-unused-vars
-  onImageUpload: (imageURL: string) => void;
-  imageURL: string | null;
+  onImagesUpload: (imageURLs: string[]) => void;
+  imageURLs: string[];
 };
 
-export default function ImageUpload({ onImageUpload, imageURL }: Props) {
+export default function ImageUpload({ onImagesUpload, imageURLs }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-  }, [imageURL]);
+  }, [imageURLs]);
 
   const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files === null) return;
 
-    const file = e.target.files[0];
     const formData = new FormData();
-    formData.append('image', file);
+    [...e.target.files].forEach((file) => {
+      formData.append('images', file);
+    });
 
-    const serverImageURL = await uploadImage(formData);
-    if (serverImageURL) {
-      onImageUpload(serverImageURL);
+    const serverImageURLs = await uploadImage(formData);
+    if (serverImageURLs) {
+      onImagesUpload(serverImageURLs);
     }
   };
 
@@ -44,23 +45,24 @@ export default function ImageUpload({ onImageUpload, imageURL }: Props) {
           id="file-input"
           className="hidden"
           type="file"
+          multiple={true}
           ref={fileInputRef}
           onChange={handleImageChange}
         />
       </label>
 
-      {imageURL && (
-        <div data-testid="images" className="bg-white border-t-2 p-5">
-          <Image
-            className="w-auto h-auto"
-            src={`${SERVER_URL}/${imageURL}`}
-            alt="preview"
-            width={0}
-            height={0}
-            unoptimized // unoptimize for higher quality image
-          />
-        </div>
-      )}
+      {imageURLs.map((imageURL, index) => (
+        <Image
+          key={index}
+          data-testid="image"
+          className="w-auto h-auto"
+          src={`${SERVER_URL}/${imageURL}`}
+          alt="preview"
+          width={0}
+          height={0}
+          unoptimized // unoptimize for higher quality image
+        />
+      ))}
     </>
   );
 }

@@ -14,11 +14,11 @@ use uuid::Uuid;
 
 use crate::AppState;
 
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct UserMessage {
     username: String,
     text: String,
-    image_url: Option<String>,
+    image_urls: Vec<String>,
 }
 
 pub async fn ws_handler(

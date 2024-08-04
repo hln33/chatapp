@@ -50,7 +50,7 @@ describe('<ChatBox />', () => {
       fromCurrentUser: true,
       username,
       text: message,
-      image_url: '',
+      image_urls: [],
     });
   });
 });

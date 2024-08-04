@@ -7,6 +7,10 @@ use axum::{
 use std::time::{SystemTime, UNIX_EPOCH};
 use tokio::io::AsyncWriteExt;
 
+fn is_image(content_type: &str) -> bool {
+    matches!(content_type, "image/png" | "image/jpeg")
+}
+
 fn generate_unique_file_name(file_name: &str) -> String {
     let timestamp = SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -44,18 +48,19 @@ async fn upload_image(field: Field<'_>) -> Result<String, String> {
 }
 
 pub async fn file_upload_handler(mut multipart: Multipart) -> impl IntoResponse {
+    let mut file_urls = Vec::new();
+
     while let Some(field) = multipart.next_field().await.unwrap() {
-        let name = field.name().unwrap();
-        if name == "image" {
-            return match upload_image(field).await {
-                Ok(file_url) => (StatusCode::OK, file_url),
-                Err(err) => (StatusCode::BAD_REQUEST, err.to_string()),
+        if field.name().unwrap() == "images" && is_image(field.content_type().unwrap()) {
+            match upload_image(field).await {
+                Ok(file_url) => file_urls.push(file_url),
+                Err(err_msg) => return (StatusCode::BAD_REQUEST, err_msg),
             };
         }
     }
 
-    (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        String::from("File upload failed"),
-    )
+    match serde_json::to_string(&file_urls) {
+        Ok(file_urls) => (StatusCode::OK, file_urls),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()),
+    }
 }
