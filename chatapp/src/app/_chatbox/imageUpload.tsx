@@ -51,18 +51,27 @@ export default function ImageUpload({ onImagesUpload, imageURLs }: Props) {
         />
       </label>
 
-      {imageURLs.map((imageURL, index) => (
-        <Image
-          key={index}
-          data-testid="image"
-          className="w-auto h-auto"
-          src={`${SERVER_URL}/${imageURL}`}
-          alt="preview"
-          width={0}
-          height={0}
-          unoptimized // unoptimize for higher quality image
-        />
-      ))}
+      <div className="relative">
+        {imageURLs.length !== 0 && (
+          <i className="absolute z-10 top-3 right-0 rounded-full w-8 h-8 flex items-center justify-center font-sans bg-black">
+            {imageURLs.length}
+          </i>
+        )}
+        <div className="stack">
+          {imageURLs.map((imageURL, index) => (
+            <Image
+              key={index}
+              data-testid="image"
+              className="w-auto h-auto shadow-xl"
+              src={`${SERVER_URL}/${imageURL}`}
+              alt="preview"
+              width={0}
+              height={0}
+              unoptimized // unoptimize for higher quality image
+            />
+          ))}
+        </div>
+      </div>
     </>
   );
 }
