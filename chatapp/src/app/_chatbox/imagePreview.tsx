@@ -8,16 +8,14 @@ type Props = {
 };
 
 export default function ImagePreview({ imageURLs }: Props) {
-  console.log(imageURLs.length);
+  if (imageURLs.length === 0) return null;
 
   return (
     <>
       <div className="relative indicator w-full">
-        {imageURLs.length !== 0 && (
-          <i className="z-10 indicator-item badge badge-ghost font-mono text-white">
-            {imageURLs.length}
-          </i>
-        )}
+        <i className="z-10 indicator-item badge badge-secondary font-mono text-white">
+          {imageURLs.length}
+        </i>
 
         <div
           className="stack cursor-pointer"
