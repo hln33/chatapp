@@ -1,6 +1,5 @@
-import Image from 'next/image';
-import { SERVER_URL } from '@/lib/constants';
 import { Message } from './types';
+import ImagePreview from './imagePreview';
 
 type Props = {
   message: Message;
@@ -29,18 +28,9 @@ export default function MessageBubble({ message }: Props) {
     <div className={`flex ${alignment}`}>
       <div>
         {userName}
-        <div className={`p-3 max-w-xs ${color} ${roundedCorners}`}>
+        <div className={`p-3 max-w-xs space-y-3 ${color} ${roundedCorners}`}>
           <span data-testid="message-text">{text}</span>
-          {message.image_urls.map((imageURL, index) => (
-            <Image
-              key={index}
-              data-testid="image"
-              src={`${SERVER_URL}/${imageURL}`}
-              alt="image"
-              width={200}
-              height={200}
-            />
-          ))}
+          <ImagePreview imageURLs={message.image_urls} />
         </div>
       </div>
     </div>

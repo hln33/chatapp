@@ -5,6 +5,7 @@ import useSession from '@/hooks/useSession';
 import { Message } from './types';
 import MessageBubble from './messageBubble';
 import ImageUpload from './imageUpload';
+import ImagePreview from './imagePreview';
 
 type Props = {
   messages: Message[];
@@ -99,6 +100,8 @@ export default function ChatBox({ messages, sendMessage }: Props) {
           Send
         </button>
       </form>
+
+      <ImagePreview imageURLs={imageURLs} />
     </div>
   );
 }
