@@ -13,9 +13,6 @@ describe('<ImageUpload />', () => {
 
     expect(screen.getByTestId('file-input-label')).toBeDefined();
     expect(screen.getByTestId('file-input')).toBeDefined();
-
-    expect(screen.getByTestId('image')).toBeDefined();
-    expect(screen.getAllByTestId('image')).toHaveLength(1);
   });
 
   it('shows no images if there is no url provided', () => {

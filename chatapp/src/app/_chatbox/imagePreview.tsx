@@ -41,7 +41,7 @@ export default function ImagePreview({ imageURLs }: Props) {
           {imageURLs.map((imageURL, index) => (
             <Image
               key={index}
-              data-testid="image"
+              data-testid="image-preview"
               className="w-auto h-auto p-5"
               src={`${SERVER_URL}/${imageURL}`}
               alt="preview"
