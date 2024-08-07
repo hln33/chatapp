@@ -1366,6 +1366,7 @@ dependencies = [
  "axum",
  "axum-extra",
  "futures",
+ "http",
  "reqwest",
  "serde",
  "serde_json",

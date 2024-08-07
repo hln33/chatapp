@@ -1,7 +1,7 @@
 'use client';
 
 import { ChangeEvent, Dispatch, FormEvent, useState } from 'react';
-import useSession from '@/hooks/useSession';
+// import useSession from '@/hooks/useSession';
 import { Message } from './types';
 import MessageBubble from './messageBubble';
 import ImageUpload from './imageUpload';
@@ -17,7 +17,7 @@ export default function ChatBox({ messages, sendMessage }: Props) {
   const [username, setUsername] = useState('');
   const [draftMessage, setDraftMessage] = useState('');
   const [imageURLs, setImageURLs] = useState<string[]>([]);
-  useSession();
+  // useSession();
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
