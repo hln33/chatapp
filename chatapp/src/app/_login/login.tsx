@@ -15,7 +15,7 @@ export default function Login() {
     const password = formData.get('password');
 
     const res = await loginUser(username as string, password as string);
-    if (res.ok) {
+    if (res?.ok) {
       router.push('/chat');
     }
   };
