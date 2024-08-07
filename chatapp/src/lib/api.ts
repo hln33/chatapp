@@ -17,3 +17,15 @@ export const uploadImage = async (formData: FormData): Promise<string[] | null> 
 
   return null;
 };
+
+export const loginUser = async (username: string, password: string) => {
+  const res = await fetch(`${SERVER_URL}/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password }),
+  });
+  console.log(res);
+  console.log(await res.text());
+
+  return res;
+}

@@ -1,4 +1,4 @@
-import { Message } from "@/app/_chatbox/types";
+import { Message } from "@/app/chat/_chatbox/types";
 import { SOCKET_URL } from "@/lib/constants";
 import { useEffect, useState } from "react";
 

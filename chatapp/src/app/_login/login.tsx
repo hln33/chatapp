@@ -1,7 +1,12 @@
-import { SERVER_URL } from '@/lib/constants';
+'use client';
+
+import { loginUser } from '@/lib/api';
+import { useRouter } from 'next/navigation';
 import { FormEvent } from 'react';
 
 export default function Login() {
+  const router = useRouter();
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -9,21 +14,31 @@ export default function Login() {
     const username = formData.get('username');
     const password = formData.get('password');
 
-    const res = await fetch(`${SERVER_URL}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    });
-    console.log(res);
-
-    console.log(await res.text());
+    const res = await loginUser(username as string, password as string);
+    if (res.ok) {
+      router.push('/chat');
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="text" name="username" placeholder="Username" required />
-      <input type="text" name="password" placeholder="Password" required />
-      <button type="submit">Login</button>
+    <form className="flex flex-col space-y-3" onSubmit={handleSubmit}>
+      <input
+        className="input input-bordered text-center"
+        type="text"
+        name="username"
+        placeholder="Username"
+        required
+      />
+      <input
+        className="input input-bordered text-center"
+        type="text"
+        name="password"
+        placeholder="Password"
+        required
+      />
+      <button className="btn bg-cyan-400 text-white" type="submit">
+        Login
+      </button>
     </form>
   );
 }
