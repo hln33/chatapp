@@ -38,6 +38,7 @@ use crate::AppState;
 //     (jar, StatusCode::OK)
 // }
 
+#[derive(Debug)]
 pub struct User {
     pub username: String,
     pub password: String,

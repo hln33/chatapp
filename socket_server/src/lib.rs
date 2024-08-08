@@ -2,6 +2,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use db::{add_user, get_user};
 use file_upload::file_upload_handler;
 use http::header::CONTENT_TYPE;
 use login::{login_handler, User};
@@ -15,6 +16,7 @@ use tower_http::{cors::CorsLayer, services::ServeDir, trace::TraceLayer};
 use uuid::Uuid;
 use web_socket::{ws_handler, UserMessage};
 
+mod db;
 mod file_upload;
 mod login;
 mod web_socket;
@@ -71,6 +73,10 @@ fn app() -> Router {
 }
 
 pub async fn start_server<T: ToSocketAddrs>(listener_addr: T) {
+    add_user("harry", "12345");
+    let user = get_user("harry");
+    println!("{:?}", user);
+
     let app = app();
     let listener = tokio::net::TcpListener::bind(listener_addr).await.unwrap();
 
