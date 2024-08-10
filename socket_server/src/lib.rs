@@ -28,6 +28,7 @@ struct AppState {
     tx: broadcast::Sender<(Uuid, UserMessage)>,
 }
 
+// only for testing
 fn create_user_db() -> Mutex<HashMap<String, User>> {
     let mut users = HashMap::new();
     users.insert(

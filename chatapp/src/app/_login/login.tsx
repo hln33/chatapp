@@ -2,10 +2,11 @@
 
 import { loginUser } from '@/lib/api';
 import { useRouter } from 'next/navigation';
-import { FormEvent } from 'react';
+import { FormEvent, useState } from 'react';
 
 export default function Login() {
   const router = useRouter();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,13 +30,24 @@ export default function Login() {
         placeholder="Username"
         required
       />
-      <input
-        className="input input-bordered text-center"
-        type="text"
-        name="password"
-        placeholder="Password"
-        required
-      />
+
+      <div className="relative">
+        <input
+          className="input input-bordered text-center"
+          type={isPasswordVisible ? 'text' : 'password'}
+          name="password"
+          placeholder="Password"
+          required
+        />
+        <button
+          type="button"
+          className="absolute right-3 top-1/2 transform -translate-y-1/2"
+          onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+        >
+          {isPasswordVisible ? '👁️' : '🙈'}
+        </button>
+      </div>
+
       <button className="btn bg-cyan-400 text-white" type="submit">
         Login
       </button>

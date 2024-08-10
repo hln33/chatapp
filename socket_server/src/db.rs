@@ -6,7 +6,7 @@ use crate::login::User;
 const DB_PATH: &str = "../databse.db3";
 
 fn init_db(conn: &Connection) {
-    if let Err(err) = conn.execute(
+    if let Err(e) = conn.execute(
         "CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY,
                 name TEXT NOT NULL UNIQUE,
@@ -14,7 +14,7 @@ fn init_db(conn: &Connection) {
             )",
         (),
     ) {
-        panic!("Failed to init db table: {}", err)
+        panic!("Failed to init db table: {}", e)
     }
 }
 
@@ -31,11 +31,11 @@ fn open_db_conn() -> Connection {
 pub fn add_user(username: &str, password: &str) {
     let conn = open_db_conn();
 
-    if let Err(err) = conn.execute(
+    if let Err(e) = conn.execute(
         "INSERT INTO users (name, password) VALUES (?1, ?2) ",
         [username, password],
     ) {
-        error!("Failed to insert user into db table: {}", err);
+        error!("Failed to insert user into db table: {}", e);
     }
 }
 
