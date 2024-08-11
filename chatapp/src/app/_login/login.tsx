@@ -1,22 +1,25 @@
 'use client';
 
+import { useUser } from '@/context/userContext';
 import { loginUser } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useState } from 'react';
 
 export default function Login() {
   const router = useRouter();
+  const { login } = useUser();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
-    const username = formData.get('username');
-    const password = formData.get('password');
+    const username = formData.get('username') as string;
+    const password = formData.get('password') as string;
 
-    const res = await loginUser(username as string, password as string);
+    const res = await loginUser(username, password);
     if (res?.ok) {
+      login(username);
       router.push('/chat');
     }
   };

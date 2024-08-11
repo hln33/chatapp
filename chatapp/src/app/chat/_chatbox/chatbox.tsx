@@ -1,11 +1,11 @@
 'use client';
 
 import { ChangeEvent, Dispatch, FormEvent, useState } from 'react';
-// import useSession from '@/hooks/useSession';
 import { Message } from './types';
 import MessageBubble from './messageBubble';
 import ImageUpload from './imageUpload';
 import ImagePreview from './imagePreview';
+import { useUser } from '@/context/userContext';
 
 type Props = {
   messages: Message[];
@@ -14,6 +14,7 @@ type Props = {
 };
 
 export default function ChatBox({ messages, sendMessage }: Props) {
+  const { user } = useUser();
   const [username, setUsername] = useState('');
   const [draftMessage, setDraftMessage] = useState('');
   const [imageURLs, setImageURLs] = useState<string[]>([]);
@@ -65,7 +66,7 @@ export default function ChatBox({ messages, sendMessage }: Props) {
           data-testid="username-input"
           className="input input-bordered"
           type="text"
-          placeholder="Username"
+          placeholder={user?.username ?? 'Username'}
           value={username}
           onChange={(e) => handleTextInputChange(e, setUsername)}
           onInvalid={(e) =>

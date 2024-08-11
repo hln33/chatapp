@@ -56,3 +56,8 @@ pub fn get_user(username: &str) -> Option<User> {
 
     rows.next().map(|user| user.unwrap())
 }
+
+pub fn verify_user(username: &str, session_id: &str) -> bool {
+    // stub
+    false
+}
