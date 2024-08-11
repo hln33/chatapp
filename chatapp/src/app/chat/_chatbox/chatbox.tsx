@@ -18,7 +18,6 @@ export default function ChatBox({ messages, sendMessage }: Props) {
   const [username, setUsername] = useState('');
   const [draftMessage, setDraftMessage] = useState('');
   const [imageURLs, setImageURLs] = useState<string[]>([]);
-  // useSession();
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
