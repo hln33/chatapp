@@ -3,7 +3,7 @@ use tracing::error;
 
 use crate::login::User;
 
-const DB_PATH: &str = "../databse.db3";
+const DB_PATH: &str = "./databse.db3";
 
 fn init_db(conn: &Connection) {
     if let Err(e) = conn.execute(

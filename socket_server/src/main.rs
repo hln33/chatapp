@@ -3,7 +3,7 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
 
 use socket_server::start_server;
 
-const LISTENER_ADDR: &str = "127.0.0.1:3001";
+const LISTENER_ADDR: &str = "0.0.0.0:3001";
 
 #[tokio::main]
 async fn main() {

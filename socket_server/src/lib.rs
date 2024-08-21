@@ -21,7 +21,8 @@ mod file_upload;
 mod login;
 mod web_socket;
 
-const FRONT_END_URL: &str = "http://localhost:3000";
+// const FRONT_END_URL: &str = "http://localhost:3000";
+const FRONT_END_URL: &str = "http://143.198.108.142";
 
 struct AppState {
     users: Mutex<HashMap<String, User>>,

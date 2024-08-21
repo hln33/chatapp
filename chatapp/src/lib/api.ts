@@ -1,6 +1,8 @@
-import { SERVER_URL } from "./constants";
+import { SERVER_URL } from './constants';
 
-export const uploadImage = async (formData: FormData): Promise<string[] | null> => {
+export const uploadImage = async (
+  formData: FormData
+): Promise<string[] | null> => {
   try {
     const res = await fetch(`${SERVER_URL}/file_upload`, {
       method: 'POST',
@@ -16,7 +18,10 @@ export const uploadImage = async (formData: FormData): Promise<string[] | null> 
   return null;
 };
 
-export const loginUser = async (username: string, password: string): Promise<Response | null> => {
+export const loginUser = async (
+  username: string,
+  password: string
+): Promise<Response | null> => {
   try {
     const res = await fetch(`${SERVER_URL}/login`, {
       method: 'POST',
@@ -32,4 +37,4 @@ export const loginUser = async (username: string, password: string): Promise<Res
   }
 
   return null;
-}
+};
