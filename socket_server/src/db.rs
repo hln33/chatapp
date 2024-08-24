@@ -1,20 +1,37 @@
-use rusqlite::Connection;
-use tracing::error;
+use std::time::{SystemTime, UNIX_EPOCH};
+
+use rusqlite::{Connection, Result};
+use tracing::{error, info};
 
 use crate::login::User;
 
 const DB_PATH: &str = "./databse.db3";
 
 fn init_db(conn: &Connection) {
-    if let Err(e) = conn.execute(
-        "CREATE TABLE IF NOT EXISTS users (
+    let tables = [
+        (
+            "users",
+            "CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY,
                 name TEXT NOT NULL UNIQUE,
                 password TEXT NOT NULL
             )",
-        (),
-    ) {
-        panic!("Failed to init db table: {}", e)
+        ),
+        (
+            "sessions",
+            "CREATE TABLE IF NOT EXISTS sessions (
+                session_id TEXT PRIMARY KEY,
+                user_id INTEGER NOT NULL UNIQUE,
+                expiration_time INTEGER,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )",
+        ),
+    ];
+
+    for (table_name, creation_query) in tables {
+        if let Err(e) = conn.execute(creation_query, []) {
+            panic!("Failed to init {} table: {}", table_name, e);
+        }
     }
 }
 
@@ -57,7 +74,45 @@ pub fn get_user(username: &str) -> Option<User> {
     rows.next().map(|user| user.unwrap())
 }
 
-pub fn verify_user(username: &str, session_id: &str) -> bool {
-    // stub
-    false
+pub fn create_session(username: &str, session_id: &str) -> Result<()> {
+    let conn = open_db_conn();
+
+    let mut stmt = conn.prepare("SELECT id FROM users WHERE name = ?1")?;
+    let user_id: i32 = stmt.query_row([username], |row| row.get(0))?;
+
+    let expiration_time = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_secs()
+        + 3600; // 1 hour from now
+
+    conn.execute(
+        "INSERT INTO sessions (session_id, user_id, expiration_time) VALUES (?1, ?2, ?3)",
+        [
+            session_id,
+            &user_id.to_string(),
+            &expiration_time.to_string(),
+        ],
+    )?;
+
+    info!("Created new user session.");
+    Ok(())
+}
+
+pub fn verify_user_session(username: &str, session_id: &str) -> Result<bool> {
+    let conn = open_db_conn();
+
+    let mut stmt = conn.prepare("SELECT expiration_time FROM sessions WHERE session_id = ?1")?;
+    let session_expire_time: u64 = stmt.query_row([session_id], |row| row.get(0))?;
+
+    let current_time = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_secs();
+    if current_time > session_expire_time {
+        conn.execute("DELETE FROM sessions WHERE session_id = ?1", [session_id])?;
+        Ok(false)
+    } else {
+        Ok(true)
+    }
 }

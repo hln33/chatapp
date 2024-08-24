@@ -8,10 +8,9 @@ const LISTENER_ADDR: &str = "0.0.0.0:3001";
 #[tokio::main]
 async fn main() {
     init_logging();
+
     info!("Starting web socket server...");
-
     start_server(LISTENER_ADDR).await;
-
     info!("ending web socket server...")
 }
 
