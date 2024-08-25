@@ -12,11 +12,7 @@ use tokio::{net::ToSocketAddrs, signal, sync::broadcast};
 use tower_http::{cors::CorsLayer, services::ServeDir, trace::TraceLayer};
 use uuid::Uuid;
 
-use routes::{
-    check_session, file_upload,
-    login::{self, User},
-    web_socket::{self, UserMessage},
-};
+use routes::{check_session, file_upload, login, web_socket};
 
 mod db;
 mod routes;
@@ -25,8 +21,8 @@ const FRONT_END_URL: &str = "http://localhost:3000";
 // const FRONT_END_URL: &str = "http://143.198.108.142";
 
 struct AppState {
-    users: Mutex<HashMap<String, User>>,
-    tx: broadcast::Sender<(Uuid, UserMessage)>,
+    users: Mutex<HashMap<String, login::User>>,
+    tx: broadcast::Sender<(Uuid, web_socket::UserMessage)>,
 }
 
 fn app() -> Router {
@@ -35,7 +31,6 @@ fn app() -> Router {
         users: db::create_user_db(),
         tx,
     });
-
     let cors = CorsLayer::new()
         .allow_origin([FRONT_END_URL.parse().unwrap()])
         .allow_headers([CONTENT_TYPE])
