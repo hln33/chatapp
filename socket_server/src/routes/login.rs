@@ -20,7 +20,7 @@ pub struct LoginData {
     password: String,
 }
 
-pub async fn login_handler(
+pub async fn handler(
     State(state): State<Arc<AppState>>,
     mut jar: CookieJar,
     Json(login_data): Json<LoginData>,

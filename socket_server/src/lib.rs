@@ -2,12 +2,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
-use db::{add_user, get_user};
 use http::header::CONTENT_TYPE;
-use routes::check_session::check_session_handler;
-use routes::file_upload::file_upload_handler;
-use routes::login::{login_handler, User};
-use routes::web_socket::{ws_handler, UserMessage};
 use std::{
     collections::HashMap,
     net::SocketAddr,
@@ -16,6 +11,12 @@ use std::{
 use tokio::{net::ToSocketAddrs, signal, sync::broadcast};
 use tower_http::{cors::CorsLayer, services::ServeDir, trace::TraceLayer};
 use uuid::Uuid;
+
+use routes::{
+    check_session, file_upload,
+    login::{self, User},
+    web_socket::{self, UserMessage},
+};
 
 mod db;
 mod routes;
@@ -28,33 +29,10 @@ struct AppState {
     tx: broadcast::Sender<(Uuid, UserMessage)>,
 }
 
-// only for testing
-fn create_user_db() -> Mutex<HashMap<String, User>> {
-    let mut users = HashMap::new();
-    users.insert(
-        "harry".to_string(),
-        User {
-            username: "harry".to_string(),
-            password: "harryiscool".to_string(),
-        },
-    );
-    Mutex::new(users)
-}
-
-async fn shutdown_signal() {
-    let ctrl_c = async {
-        signal::ctrl_c().await.unwrap();
-    };
-
-    tokio::select! {
-        _ = ctrl_c => { println!("ctrl+c detected...") },
-    }
-}
-
 fn app() -> Router {
     let (tx, _rx) = broadcast::channel(100);
     let app_state = Arc::new(AppState {
-        users: create_user_db(),
+        users: db::create_user_db(),
         tx,
     });
 
@@ -64,10 +42,10 @@ fn app() -> Router {
         .allow_credentials(true);
 
     Router::new()
-        .route("/login", post(login_handler))
-        .route("/check_session", post(check_session_handler))
-        .route("/ws", get(ws_handler))
-        .route("/file_upload", post(file_upload_handler))
+        .route("/login", post(login::handler))
+        .route("/check_session", post(check_session::handler))
+        .route("/ws", get(web_socket::handler))
+        .route("/file_upload", post(file_upload::handler))
         .nest_service("/uploads", ServeDir::new("public/uploads"))
         .with_state(app_state)
         .layer(cors)
@@ -75,8 +53,8 @@ fn app() -> Router {
 }
 
 pub async fn start_server<T: ToSocketAddrs>(listener_addr: T) {
-    add_user("harry", "12345");
-    let user = get_user("harry");
+    db::add_user("harry", "12345");
+    let user = db::get_user("harry");
     println!("{:?}", user);
 
     let app = app();
@@ -89,4 +67,14 @@ pub async fn start_server<T: ToSocketAddrs>(listener_addr: T) {
     .with_graceful_shutdown(shutdown_signal())
     .await
     .unwrap();
+}
+
+async fn shutdown_signal() {
+    let ctrl_c = async {
+        signal::ctrl_c().await.unwrap();
+    };
+
+    tokio::select! {
+        _ = ctrl_c => { println!("ctrl+c detected...") },
+    }
 }

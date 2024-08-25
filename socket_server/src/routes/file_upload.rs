@@ -47,7 +47,7 @@ async fn upload_image(field: Field<'_>) -> Result<String, String> {
     }
 }
 
-pub async fn file_upload_handler(mut multipart: Multipart) -> impl IntoResponse {
+pub async fn handler(mut multipart: Multipart) -> impl IntoResponse {
     let mut file_urls = Vec::new();
 
     while let Some(field) = multipart.next_field().await.unwrap() {

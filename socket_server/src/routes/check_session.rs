@@ -9,19 +9,12 @@ pub struct RequestData {
     username: String,
 }
 
-pub async fn check_session_handler(
-    jar: CookieJar,
-    Json(req_data): Json<RequestData>,
-) -> impl IntoResponse {
-    let session_cookie = jar.get("session_id");
-    match session_cookie {
-        Some(cookie) => {
-            let session_id = cookie.value();
-            match verify_user_session(&req_data.username, session_id) {
-                Ok(_) => StatusCode::OK,
-                Err(_) => StatusCode::UNAUTHORIZED,
-            }
-        }
+pub async fn handler(jar: CookieJar, Json(req_data): Json<RequestData>) -> impl IntoResponse {
+    match jar.get("session_id") {
+        Some(cookie) => match verify_user_session(&req_data.username, cookie.value()) {
+            Ok(_) => StatusCode::OK,
+            Err(_) => StatusCode::UNAUTHORIZED,
+        },
         None => StatusCode::UNAUTHORIZED,
     };
 }

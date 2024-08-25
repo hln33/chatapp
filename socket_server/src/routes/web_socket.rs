@@ -21,7 +21,7 @@ pub struct UserMessage {
     image_urls: Vec<String>,
 }
 
-pub async fn ws_handler(
+pub async fn handler(
     ws: WebSocketUpgrade,
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
     State(state): State<Arc<AppState>>,
