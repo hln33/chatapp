@@ -31,7 +31,6 @@ mod tests {
         let image_urls: Vec<String> = serde_json::from_str(&response.text().await?).unwrap();
         let file_path = &format!("./public/{}", image_urls[0]);
         let file_exists = std::fs::metadata(file_path)?.is_file();
-
         assert!(file_exists);
         std::fs::remove_file(file_path)?;
 

@@ -1,4 +1,4 @@
 /target
 /public/uploads/*
 
-/database.db3
+database.db3

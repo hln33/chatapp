@@ -38,3 +38,14 @@ export const loginUser = async (
 
   return null;
 };
+
+export const verifyUserSession = async () => {
+  try {
+    const res = await fetch(`${SERVER_URL}/check_session`);
+
+    const json = await res.json();
+    console.log(json);
+  } catch (err) {
+    console.error('error validating session:', err);
+  }
+};

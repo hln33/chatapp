@@ -3,9 +3,11 @@ use axum::{
     Router,
 };
 use db::{add_user, get_user};
-use file_upload::file_upload_handler;
 use http::header::CONTENT_TYPE;
-use login::{login_handler, User};
+use routes::check_session::check_session_handler;
+use routes::file_upload::file_upload_handler;
+use routes::login::{login_handler, User};
+use routes::web_socket::{ws_handler, UserMessage};
 use std::{
     collections::HashMap,
     net::SocketAddr,
@@ -14,12 +16,9 @@ use std::{
 use tokio::{net::ToSocketAddrs, signal, sync::broadcast};
 use tower_http::{cors::CorsLayer, services::ServeDir, trace::TraceLayer};
 use uuid::Uuid;
-use web_socket::{ws_handler, UserMessage};
 
 mod db;
-mod file_upload;
-mod login;
-mod web_socket;
+mod routes;
 
 const FRONT_END_URL: &str = "http://localhost:3000";
 // const FRONT_END_URL: &str = "http://143.198.108.142";
@@ -66,6 +65,7 @@ fn app() -> Router {
 
     Router::new()
         .route("/login", post(login_handler))
+        .route("/check_session", post(check_session_handler))
         .route("/ws", get(ws_handler))
         .route("/file_upload", post(file_upload_handler))
         .nest_service("/uploads", ServeDir::new("public/uploads"))
