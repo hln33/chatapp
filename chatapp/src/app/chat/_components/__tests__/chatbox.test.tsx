@@ -10,6 +10,9 @@ vi.mock('@/hooks/useChatSocket', () => ({
   }),
 }));
 vi.mock('@/hooks/useSession');
+vi.mock('@/context/userContext', () => ({
+  useUser: () => vi.fn(),
+}));
 
 describe('<ChatBox />', () => {
   it('renders correctly', () => {

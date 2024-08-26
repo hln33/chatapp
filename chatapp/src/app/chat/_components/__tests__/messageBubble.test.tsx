@@ -16,7 +16,7 @@ const TEST_USER_MSG: Message = {
   image_urls: ['test/photo/2'],
 };
 
-describe.only('<MessageBubble />', () => {
+describe('<MessageBubble />', () => {
   it('renders recieved message correctly', () => {
     render(<MessageBubble message={TEST_RECIEVED_MSG} />);
 
