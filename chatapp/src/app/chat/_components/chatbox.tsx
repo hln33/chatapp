@@ -15,7 +15,7 @@ type Props = {
 
 export default function ChatBox({ messages, sendMessage }: Props) {
   const { user } = useUser();
-  const [username, setUsername] = useState('');
+  const [username] = useState(user?.username ?? 'Unknown User');
   const [draftMessage, setDraftMessage] = useState('');
   const [imageURLs, setImageURLs] = useState<string[]>([]);
 
@@ -60,19 +60,6 @@ export default function ChatBox({ messages, sendMessage }: Props) {
       </div>
 
       <form className="space-y-3 flex flex-col" onSubmit={handleSubmit}>
-        <input
-          required
-          data-testid="username-input"
-          className="input input-bordered"
-          type="text"
-          placeholder={user?.username ?? 'Username'}
-          value={username}
-          onChange={(e) => handleTextInputChange(e, setUsername)}
-          onInvalid={(e) =>
-            e.currentTarget.setCustomValidity('Username must not be blank')
-          }
-        />
-
         <div className="flex flex-col relative">
           <textarea
             required

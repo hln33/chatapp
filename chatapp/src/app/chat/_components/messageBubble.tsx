@@ -18,7 +18,9 @@ export default function MessageBubble({ message }: Props) {
           <div className="chat-header text-slate-400">{username}</div>
         )}
         <div
-          className={`chat-bubble ${fromCurrentUser && 'chat-bubble-primary'}`}
+          className={`chat-bubble ${
+            fromCurrentUser ? 'chat-bubble-primary' : ''
+          }`}
         >
           <span data-testid="message-text" className="h-2">
             {text}
