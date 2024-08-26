@@ -77,8 +77,10 @@ pub fn get_user(username: &str) -> Option<User> {
 pub fn create_session(username: &str, session_id: &str) -> Result<()> {
     let conn = open_db_conn();
 
-    let mut stmt = conn.prepare("SELECT id FROM users WHERE name = ?1")?;
-    let user_id: i32 = stmt.query_row([username], |row| row.get(0))?;
+    let mut stmt = conn
+        .prepare("SELECT id FROM users WHERE name = ?1")
+        .unwrap();
+    let user_id: i32 = stmt.query_row([username], |row| row.get(0)).unwrap();
 
     let expiration_time = SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -87,19 +89,20 @@ pub fn create_session(username: &str, session_id: &str) -> Result<()> {
         + 3600; // 1 hour from now
 
     conn.execute(
-        "INSERT INTO sessions (session_id, user_id, expiration_time) VALUES (?1, ?2, ?3)",
+        "INSERT OR REPLACE INTO sessions (session_id, user_id, expiration_time) VALUES (?1, ?2, ?3)",
         [
             session_id,
             &user_id.to_string(),
             &expiration_time.to_string(),
         ],
-    )?;
+    )
+    .unwrap();
 
     info!("Created new user session.");
     Ok(())
 }
 
-pub fn verify_user_session(username: &str, session_id: &str) -> Result<bool> {
+pub fn verify_user_session(session_id: &str) -> Result<bool> {
     let conn = open_db_conn();
 
     let mut stmt = conn.prepare("SELECT expiration_time FROM sessions WHERE session_id = ?1")?;

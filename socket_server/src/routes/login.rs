@@ -6,7 +6,7 @@ use serde::Deserialize;
 use tracing::error;
 use uuid::Uuid;
 
-use crate::{db::create_session, AppState};
+use crate::{db, AppState};
 
 #[derive(Debug)]
 pub struct User {
@@ -32,7 +32,7 @@ pub async fn handler(
         if user.password == login_data.password {
             let cookie = Cookie::new("session_id", Uuid::new_v4().to_string());
 
-            if create_session(username, cookie.value()).is_err() {
+            if db::create_session(username, cookie.value()).is_err() {
                 error!("Failed to create a session for {}", username)
             }
 

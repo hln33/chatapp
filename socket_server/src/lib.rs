@@ -38,7 +38,7 @@ fn app() -> Router {
 
     Router::new()
         .route("/login", post(login::handler))
-        .route("/check_session", post(check_session::handler))
+        .route("/check_session", get(check_session::handler))
         .route("/ws", get(web_socket::handler))
         .route("/file_upload", post(file_upload::handler))
         .nest_service("/uploads", ServeDir::new("public/uploads"))
@@ -48,16 +48,15 @@ fn app() -> Router {
 }
 
 pub async fn start_server<T: ToSocketAddrs>(listener_addr: T) {
+    // test code
     db::add_user("harry", "12345");
     let user = db::get_user("harry");
     println!("{:?}", user);
-
-    let app = app();
-    let listener = tokio::net::TcpListener::bind(listener_addr).await.unwrap();
+    ////////////
 
     axum::serve(
-        listener,
-        app.into_make_service_with_connect_info::<SocketAddr>(),
+        tokio::net::TcpListener::bind(listener_addr).await.unwrap(),
+        app().into_make_service_with_connect_info::<SocketAddr>(),
     )
     .with_graceful_shutdown(shutdown_signal())
     .await
