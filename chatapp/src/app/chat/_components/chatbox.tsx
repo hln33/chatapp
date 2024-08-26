@@ -1,7 +1,7 @@
 'use client';
 
 import { ChangeEvent, Dispatch, FormEvent, useState } from 'react';
-import { Message } from './types';
+import { Message } from '../_types/types';
 import MessageBubble from './messageBubble';
 import ImageUpload from './imageUpload';
 import ImagePreview from './imagePreview';

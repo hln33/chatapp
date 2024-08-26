@@ -1,4 +1,4 @@
-import { Message } from './types';
+import { Message } from '../_types/types';
 import ImagePreview from './imagePreview';
 
 type Props = {

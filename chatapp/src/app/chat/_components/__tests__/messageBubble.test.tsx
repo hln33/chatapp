@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Message } from '../types';
+import { Message } from '../../_types/types';
 import MessageBubble from '../messageBubble';
 import { render, screen } from '@testing-library/react';
 
@@ -16,8 +16,9 @@ const TEST_USER_MSG: Message = {
   image_urls: ['test/photo/2'],
 };
 
-describe('<MessageBubble />', () => {
+describe.only('<MessageBubble />', () => {
   it('renders recieved message correctly', () => {
+    console.error(process.env);
     render(<MessageBubble message={TEST_RECIEVED_MSG} />);
 
     expect(screen.getByText(TEST_RECIEVED_MSG.username)).toBeDefined();

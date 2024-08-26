@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { verifyUserSession } from '@/lib/session';
-import ChatWindow from './_chatbox/chatWindow';
+import ChatWindow from './_components/chatWindow';
 
 export default async function Home() {
   const isValidSession = await verifyUserSession();
