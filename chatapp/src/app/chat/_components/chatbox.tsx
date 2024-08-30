@@ -64,7 +64,7 @@ export default function ChatBox({ messages, sendMessage }: Props) {
           <textarea
             required
             data-testid="message-input"
-            className="textarea textarea-bordered"
+            className="textarea textarea-bordered h-10"
             placeholder="message"
             value={draftMessage}
             onChange={(e) => handleTextInputChange(e, setDraftMessage)}
