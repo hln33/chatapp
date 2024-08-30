@@ -10,7 +10,7 @@ export default async function Home() {
 
   return (
     <main className="flex flex-col items-center justify-center p-11 space-y-3">
-      <div className="card bg-gray-800 p-8">
+      <div className="card bg-gray-800 p-6">
         <ChatWindow />
       </div>
     </main>
