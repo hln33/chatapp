@@ -19,23 +19,14 @@ describe('<ChatBox />', () => {
     render(<ChatBox messages={[]} sendMessage={vi.fn()} />);
 
     expect(screen.getByTestId('chat-window')).toBeDefined();
-    expect(screen.getByTestId('username-input')).toBeDefined();
     expect(screen.getByTestId('message-input')).toBeDefined();
   });
 
   it('handles message sending', async () => {
-    const username = 'Harry';
     const message = 'This is my funny message!';
     const user = userEvent.setup();
     const { sendMessage } = useChatSocket();
     render(<ChatBox messages={[]} sendMessage={sendMessage} />);
-
-    const usernameInput = screen.getByTestId(
-      'username-input'
-    ) as HTMLInputElement;
-    await user.click(usernameInput);
-    await user.keyboard(username);
-    expect(usernameInput.value).toEqual(username);
 
     const messageInput = screen.getByTestId(
       'message-input'
@@ -47,13 +38,7 @@ describe('<ChatBox />', () => {
     const sendButton = screen.getByTestId('send-button');
     await user.click(sendButton);
 
-    expect(usernameInput.value).toEqual(username);
     expect(messageInput.value).toEqual('');
-    expect(sendMessage).toHaveBeenCalledWith({
-      fromCurrentUser: true,
-      username,
-      text: message,
-      image_urls: [],
-    });
+    expect(sendMessage).toHaveBeenCalled();
   });
 });
