@@ -9,7 +9,7 @@ export default async function Home() {
   }
 
   return (
-    <main className="h-screen flex flex-col items-center justify-center p-24 space-y-3">
+    <main className="flex flex-col items-center justify-center p-11 space-y-3">
       <div className="card bg-gray-800 p-8">
         <ChatWindow />
       </div>

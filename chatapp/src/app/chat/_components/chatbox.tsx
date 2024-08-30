@@ -52,7 +52,7 @@ export default function ChatBox({ messages, sendMessage }: Props) {
     <div className="space-y-5 w-96">
       <div
         data-testid="chat-window"
-        className="bg-white h-96 w-50 py-5 px-2 overflow-y-scroll rounded-md"
+        className="bg-white h-72 w-50 py-5 px-2 overflow-y-scroll rounded-md"
       >
         {messages.map((msg, index) => (
           <MessageBubble message={msg} key={index} />

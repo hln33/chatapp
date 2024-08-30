@@ -18,12 +18,8 @@ type Props = {
 function UserProvider({ children }: Props) {
   const [user, setUser] = useState<User | null>(null);
 
-  const login = (username: string) => {
-    setUser({ username });
-  };
-  const logout = () => {
-    setUser(null);
-  };
+  const login = (username: string) => setUser({ username });
+  const logout = () => setUser(null);
 
   return (
     <UserContext.Provider value={{ user, login, logout }}>
