@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/userContext';
 import { loginUser } from '@/lib/api';
@@ -26,7 +25,6 @@ export default function Login() {
   };
 
   return (
-    <div className="flex flex-col space-y-3 text-center">
       <form className="flex flex-col space-y-3" onSubmit={handleSubmit}>
         <input
           className="input input-bordered text-center"
@@ -41,9 +39,5 @@ export default function Login() {
           Login
         </button>
       </form>
-
-      <div className="divider divider-neutral" />
-      <Link href="/register">Sign Up</Link>
-    </div>
   );
 }
