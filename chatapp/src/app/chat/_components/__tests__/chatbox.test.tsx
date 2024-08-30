@@ -23,11 +23,11 @@ describe('<ChatBox />', () => {
   });
 
   it('handles message sending', async () => {
-    const message = 'This is my funny message!';
     const user = userEvent.setup();
     const { sendMessage } = useChatSocket();
     render(<ChatBox messages={[]} sendMessage={sendMessage} />);
 
+    const message = 'This is my funny message!';
     const messageInput = screen.getByTestId(
       'message-input'
     ) as HTMLInputElement;
