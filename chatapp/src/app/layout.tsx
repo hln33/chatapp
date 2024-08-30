@@ -19,7 +19,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <div className="navbar bg-neutral rounded-box flex justify-end px-12">
+            <a className="btn btn-ghost">test</a>
+          </div>
+          {children}
+        </Providers>
       </body>
     </html>
   );
