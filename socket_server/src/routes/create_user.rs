@@ -13,7 +13,7 @@ pub struct CreateUserData {
 pub async fn handler(Json(create_user_data): Json<CreateUserData>) -> impl IntoResponse {
     let CreateUserData { username, password } = create_user_data;
     match db::add_user(&username, &password) {
-        Ok(_) => StatusCode::OK,
-        Err(_) => StatusCode::UNPROCESSABLE_ENTITY,
+        Ok(_) => (StatusCode::OK, String::from("Account creation successful")),
+        Err(error_msg) => (StatusCode::UNPROCESSABLE_ENTITY, error_msg),
     }
 }

@@ -11,15 +11,16 @@ export default function AccountRegistrationForm() {
   const createUserAction = async (formData: FormData) => {
     const username = formData.get('username') as string;
     const password = formData.get('password') as string;
-    if (username && password) {
-      const res = await createUser(username, password);
-      console.log(res);
-      if (res?.ok) {
-        redirect('/');
-      } else {
-        // TODO: should display error from server here
-        setError('problem with creating account');
-      }
+    if (!username && !password) {
+      return;
+    }
+
+    const res = await createUser(username, password);
+    if (res?.ok) {
+      redirect('/');
+    } else {
+      const errorMsg = (await res?.text()) ?? 'Unknown Error';
+      setError(errorMsg);
     }
   };
 

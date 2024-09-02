@@ -45,15 +45,19 @@ fn open_db_conn() -> Connection {
     }
 }
 
-pub fn add_user(username: &str, password: &str) -> Result<()> {
+pub fn add_user(username: &str, password: &str) -> Result<(), String> {
     let conn = open_db_conn();
+
+    if get_user(username).is_some() {
+        return Err(String::from("Username already exists"));
+    }
 
     if let Err(e) = conn.execute(
         "INSERT INTO users (name, password) VALUES (?1, ?2) ",
         [username, password],
     ) {
         error!("Failed to insert user into db table: {}", e);
-        return Err(e);
+        return Err(String::from("Server Error"));
     }
     Ok(())
 }
@@ -121,16 +125,3 @@ pub fn verify_user_session(session_id: &str) -> Result<bool> {
         Ok(true)
     }
 }
-
-// only for testing
-// pub fn create_user_db() -> std::sync::Mutex<std::collections::HashMap<String, User>> {
-//     let mut users = std::collections::HashMap::new();
-//     users.insert(
-//         "harry".to_string(),
-//         User {
-//             username: "harry".to_string(),
-//             password: "harryiscool".to_string(),
-//         },
-//     );
-//     std::sync::Mutex::new(users)
-// }
