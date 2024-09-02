@@ -7,8 +7,12 @@ use axum::{
     },
     response::IntoResponse,
 };
-use futures::{stream::StreamExt, SinkExt};
+use futures::{
+    stream::{SplitSink, StreamExt},
+    SinkExt,
+};
 use serde::{Deserialize, Serialize};
+use tokio::sync::broadcast::{Receiver, Sender};
 use tracing::{error, info};
 use uuid::Uuid;
 
@@ -31,33 +35,47 @@ pub async fn handler(
 }
 
 async fn handle_socket(socket: WebSocket, state: Arc<AppState>) {
+    fn spawn_broadcast_listener_task(
+        client_id: Uuid,
+        mut broadcast_rx: Receiver<(Uuid, UserMessage)>,
+        mut sender: SplitSink<WebSocket, Message>,
+    ) {
+        let _task = tokio::spawn(async move {
+            while let Ok((sender_id, msg)) = broadcast_rx.recv().await {
+                if sender_id == client_id {
+                    continue;
+                }
+
+                let json_string = serde_json::to_string(&msg).expect("struct to serializable");
+                if sender.send(Message::Text(json_string)).await.is_err() {
+                    break;
+                }
+            }
+        });
+    }
+
+    fn spawn_broadcast_sender_task(
+        client_id: Uuid,
+        broadcast_tx: Sender<(Uuid, UserMessage)>,
+        mut reciever: futures::stream::SplitStream<WebSocket>,
+    ) {
+        let _task = tokio::spawn(async move {
+            while let Some(Ok(Message::Text(msg))) = reciever.next().await {
+                if let Some(json_msg) = parse_json(&msg) {
+                    let _ = broadcast_tx.send((client_id, json_msg));
+                }
+            }
+        });
+    }
+
     let client_id = Uuid::new_v4();
-    let (mut sender, mut reciever) = socket.split();
+    let (sender, reciever) = socket.split();
 
-    // listen for broadcast messages and relay the message to this socket
-    let mut rx = state.tx.subscribe();
-    let mut _send_task = tokio::spawn(async move {
-        while let Ok((sender_id, msg)) = rx.recv().await {
-            if sender_id == client_id {
-                continue;
-            }
+    let rx = state.tx.subscribe();
+    spawn_broadcast_listener_task(client_id, rx, sender);
 
-            let json_string = serde_json::to_string(&msg).expect("struct to serializable");
-            if sender.send(Message::Text(json_string)).await.is_err() {
-                break;
-            }
-        }
-    });
-
-    // take message from this socket and broadcast to all subscribers
     let tx = state.tx.clone();
-    let mut _recv_task = tokio::spawn(async move {
-        while let Some(Ok(Message::Text(msg))) = reciever.next().await {
-            if let Some(json_msg) = parse_json(&msg) {
-                let _ = tx.send((client_id, json_msg));
-            }
-        }
-    });
+    spawn_broadcast_sender_task(client_id, tx, reciever);
 }
 
 fn parse_json(msg: &str) -> Option<UserMessage> {
@@ -69,27 +87,3 @@ fn parse_json(msg: &str) -> Option<UserMessage> {
         }
     }
 }
-
-// fn process_message(msg: Message, who: SocketAddr) -> ControlFlow<(), ()> {
-//     match msg {
-//         Message::Text(text) => {
-//             println!(">>> {who} sent {text}");
-//         }
-//         Message::Close(close) => {
-//             if let Some(close_frame) = close {
-//                 let code = close_frame.code;
-//                 let reason = close_frame.reason;
-//                 print!(">>> {who} sent close with code {code} and reason {reason}")
-//             } else {
-//                 println!(">>> {who} somehow sent close message without a closeframe");
-//             }
-//             return ControlFlow::Break(());
-//         }
-//         Message::Pong(v) => {
-//             println!(">>> {who} sent pong with {v:?}");
-//         }
-//         _ => panic!("unsupported message type!"),
-//     }
-
-//     ControlFlow::Continue(())
-// }
