@@ -45,7 +45,7 @@ fn open_db_conn() -> Connection {
     }
 }
 
-pub fn add_user(username: &str, password: &str) {
+pub fn add_user(username: &str, password: &str) -> Result<()> {
     let conn = open_db_conn();
 
     if let Err(e) = conn.execute(
@@ -53,7 +53,9 @@ pub fn add_user(username: &str, password: &str) {
         [username, password],
     ) {
         error!("Failed to insert user into db table: {}", e);
+        return Err(e);
     }
+    Ok(())
 }
 
 pub fn get_user(username: &str) -> Option<User> {

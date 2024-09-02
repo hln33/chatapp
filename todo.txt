@@ -3,5 +3,6 @@ webapp that allows users to be able to randomly connect
 with other people to send text messages back and forth
 
 1. manage env variables for backend
-2. register for account and then use that to login
+2. implement account creation
+3. once a user logs in "remember" their details like username
 

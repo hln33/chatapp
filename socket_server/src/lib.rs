@@ -8,7 +8,7 @@ use tokio::{net::ToSocketAddrs, signal, sync::broadcast};
 use tower_http::{cors::CorsLayer, services::ServeDir, trace::TraceLayer};
 use uuid::Uuid;
 
-use routes::{check_session, file_upload, login, web_socket};
+use routes::{check_session, create_user, file_upload, login, web_socket};
 
 mod db;
 mod routes;
@@ -30,6 +30,7 @@ fn app() -> Router {
 
     Router::new()
         .route("/login", post(login::handler))
+        .route("/create_user", post(create_user::handler))
         .route("/check_session", get(check_session::handler))
         .route("/ws", get(web_socket::handler))
         .route("/file_upload", post(file_upload::handler))
@@ -41,7 +42,7 @@ fn app() -> Router {
 
 pub async fn start_server<T: ToSocketAddrs>(listener_addr: T) {
     // test code
-    db::add_user("harry", "12345");
+    let _ = db::add_user("harry", "12345");
     let user = db::get_user("harry");
     println!("{:?}", user);
     ////////////

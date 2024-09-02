@@ -13,9 +13,8 @@ export const uploadImage = async (
     return imageURLs;
   } catch (err) {
     console.error('Error uploading image', err);
+    return null;
   }
-
-  return null;
 };
 
 export const loginUser = async (
@@ -31,12 +30,28 @@ export const loginUser = async (
       },
       body: JSON.stringify({ username, password }),
     });
-    console.log(res);
-    console.log(await res.text());
     return res;
   } catch (err) {
     console.error('Error logging in:', err);
+    return null;
   }
+};
 
-  return null;
+export const createUser = async (
+  username: string,
+  password: string
+): Promise<Response | null> => {
+  try {
+    const res = await fetch(`${SERVER_URL}/create_user`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    });
+    return res;
+  } catch (err) {
+    console.error('Error creating user:', err);
+    return null;
+  }
 };
