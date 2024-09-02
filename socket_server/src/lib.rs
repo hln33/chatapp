@@ -3,11 +3,7 @@ use axum::{
     Router,
 };
 use http::header::CONTENT_TYPE;
-use std::{
-    collections::HashMap,
-    net::SocketAddr,
-    sync::{Arc, Mutex},
-};
+use std::{net::SocketAddr, sync::Arc};
 use tokio::{net::ToSocketAddrs, signal, sync::broadcast};
 use tower_http::{cors::CorsLayer, services::ServeDir, trace::TraceLayer};
 use uuid::Uuid;
@@ -21,16 +17,12 @@ const FRONT_END_URL: &str = "http://localhost:3000";
 // const FRONT_END_URL: &str = "http://143.198.108.142";
 
 struct AppState {
-    users: Mutex<HashMap<String, login::User>>,
     tx: broadcast::Sender<(Uuid, web_socket::UserMessage)>,
 }
 
 fn app() -> Router {
     let (tx, _rx) = broadcast::channel(100);
-    let app_state = Arc::new(AppState {
-        users: db::create_user_db(),
-        tx,
-    });
+    let app_state = Arc::new(AppState { tx });
     let cors = CorsLayer::new()
         .allow_origin([FRONT_END_URL.parse().unwrap()])
         .allow_headers([CONTENT_TYPE])

@@ -8,7 +8,7 @@ export default function PasswordInput() {
   return (
     <div className="relative">
       <input
-        className="input input-bordered text-center"
+        className="input input-bordered w-full text-center"
         type={isPasswordVisible ? 'text' : 'password'}
         name="password"
         placeholder="Password"

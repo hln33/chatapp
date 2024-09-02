@@ -1,11 +1,17 @@
 import PasswordInput from '@/components/passwordInput';
 
 export default function Home() {
+  const createUser = async (formData: FormData) => {
+    'use server';
+
+    console.log(formData);
+  };
+
   return (
     <main className="h-screen flex flex-col items-center justify-center p-24 space-y-3">
       <h1 className="text-xl">Register for an account</h1>
 
-      <form className="flex flex-col space-y-3">
+      <form className="flex flex-col space-y-3" action={createUser}>
         <input
           className="input input-bordered text-center"
           type="text"

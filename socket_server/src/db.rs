@@ -121,14 +121,14 @@ pub fn verify_user_session(session_id: &str) -> Result<bool> {
 }
 
 // only for testing
-pub fn create_user_db() -> std::sync::Mutex<std::collections::HashMap<String, User>> {
-    let mut users = std::collections::HashMap::new();
-    users.insert(
-        "harry".to_string(),
-        User {
-            username: "harry".to_string(),
-            password: "harryiscool".to_string(),
-        },
-    );
-    std::sync::Mutex::new(users)
-}
+// pub fn create_user_db() -> std::sync::Mutex<std::collections::HashMap<String, User>> {
+//     let mut users = std::collections::HashMap::new();
+//     users.insert(
+//         "harry".to_string(),
+//         User {
+//             username: "harry".to_string(),
+//             password: "harryiscool".to_string(),
+//         },
+//     );
+//     std::sync::Mutex::new(users)
+// }
