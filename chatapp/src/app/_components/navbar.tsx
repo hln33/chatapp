@@ -16,10 +16,12 @@ export default function NavBar() {
   };
 
   return (
-    <div className="navbar bg-base-300 rounded-box flex justify-end px-12">
-      <a className="btn btn-ghost" onClick={handleLogout}>
-        logout
-      </a>
-    </div>
+    <>
+      <div className="navbar flex justify-end border-b border-gray-800">
+        <a className="btn btn-ghost" onClick={handleLogout}>
+          logout
+        </a>
+      </div>
+    </>
   );
 }

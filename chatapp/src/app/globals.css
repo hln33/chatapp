@@ -26,10 +26,6 @@ body {
     rgb(var(--background-start-rgb));
 }
 
-input, textarea {
-  color: black;
-}
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
