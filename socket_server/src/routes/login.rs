@@ -32,8 +32,11 @@ pub async fn handler(mut jar: CookieJar, Json(login_data): Json<LoginData>) -> i
             jar = jar.add(cookie);
             return (StatusCode::OK, jar, "login successful");
         }
-        return (StatusCode::UNAUTHORIZED, jar, "Invalid credentials");
     }
 
-    (StatusCode::INTERNAL_SERVER_ERROR, jar, "unexpected error")
+    (
+        StatusCode::INTERNAL_SERVER_ERROR,
+        jar,
+        "Oops! Wrong username or password",
+    )
 }

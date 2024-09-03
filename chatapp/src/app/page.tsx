@@ -4,7 +4,7 @@ import Login from './_components/login';
 export default function Home() {
   return (
     <main className="h-screen flex flex-col items-center justify-center space-y-3">
-      <div className="flex flex-col space-y-3 text-center">
+      <div className="flex flex-col space-y-3 text-center w-72">
         <h1 className="text-xl">Welcome to my chat app</h1>
 
         <Login />
