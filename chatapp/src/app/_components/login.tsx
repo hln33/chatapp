@@ -3,17 +3,13 @@
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/userContext';
 import { loginUser } from '@/lib/api';
-import { FormEvent } from 'react';
 import PasswordInput from '@/components/passwordInput';
 
 export default function Login() {
   const router = useRouter();
   const { login } = useUser();
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const formData = new FormData(e.currentTarget);
+  const loginUserAction = async (formData: FormData) => {
     const username = formData.get('username') as string;
     const password = formData.get('password') as string;
 
@@ -25,19 +21,19 @@ export default function Login() {
   };
 
   return (
-      <form className="flex flex-col space-y-3" onSubmit={handleSubmit}>
-        <input
-          className="input input-bordered text-center"
-          type="text"
-          name="username"
-          placeholder="Username"
-          required
-        />
-        <PasswordInput />
+    <form className="flex flex-col space-y-3" action={loginUserAction}>
+      <input
+        className="input input-bordered text-center"
+        type="text"
+        name="username"
+        placeholder="Username"
+        required
+      />
+      <PasswordInput />
 
-        <button className="btn bg-cyan-400 text-white" type="submit">
-          Login
-        </button>
-      </form>
+      <button className="btn bg-cyan-400 text-white" type="submit">
+        Login
+      </button>
+    </form>
   );
 }

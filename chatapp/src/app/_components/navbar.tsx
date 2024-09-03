@@ -1,9 +1,9 @@
 'use client';
 
-import { useUser } from '@/context/userContext';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/userContext';
 
-// still in development!
 export default function NavBar() {
   const router = useRouter();
   const { user, logout } = useUser();
@@ -17,11 +17,15 @@ export default function NavBar() {
 
   return (
     <>
-      <div className="navbar flex justify-end border-b border-gray-800">
-        <a className="btn btn-ghost" onClick={handleLogout}>
-          logout
-        </a>
+      <div className="navbar py-0">
+        <Image src="/message.svg" alt="message bubble" width={50} height={50} />
+        {user && (
+          <a className="btn btn-ghost ml-auto h-full" onClick={handleLogout}>
+            logout
+          </a>
+        )}
       </div>
+      <div className="divider m-0" />
     </>
   );
 }

@@ -8,8 +8,10 @@ export default function Home() {
         <h1 className="text-xl">Welcome to my chat app</h1>
 
         <Login />
-        <div className="divider divider-neutral" />
-        <Link className='link link-hover' href="/register">Sign Up</Link>
+        <div className="divider" />
+        <Link className="link link-hover" href="/register">
+          Sign Up
+        </Link>
       </div>
     </main>
   );

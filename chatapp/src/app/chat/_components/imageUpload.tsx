@@ -1,5 +1,6 @@
 import { ChangeEvent, useEffect, useRef } from 'react';
 import { uploadImage } from '@/lib/api';
+import Image from 'next/image';
 
 type Props = {
   // eslint-disable-next-line no-unused-vars
@@ -31,23 +32,21 @@ export default function ImageUpload({ onImagesUpload, imageURLs }: Props) {
   };
 
   return (
-    <>
-      <label
-        data-testid="file-input-label"
-        className="cursor-pointer absolute z-10 right-1"
-        htmlFor="file-input"
-      >
-        📎
-        <input
-          data-testid="file-input"
-          id="file-input"
-          className="hidden"
-          type="file"
-          multiple={true}
-          ref={fileInputRef}
-          onChange={handleImageChange}
-        />
-      </label>
-    </>
+    <label
+      data-testid="file-input-label"
+      className="cursor-pointer btn btn-square rounded-l-none"
+      htmlFor="file-input"
+    >
+      <Image src="/image.svg" alt="image upload" width={35} height={35} />
+      <input
+        data-testid="file-input"
+        id="file-input"
+        className="hidden"
+        type="file"
+        multiple={true}
+        ref={fileInputRef}
+        onChange={handleImageChange}
+      />
+    </label>
   );
 }

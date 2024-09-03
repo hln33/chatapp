@@ -60,11 +60,11 @@ export default function ChatBox({ messages, sendMessage }: Props) {
       </div>
 
       <form className="space-y-3 flex flex-col" onSubmit={handleSubmit}>
-        <div className="flex flex-col relative">
+        <div className="join">
           <textarea
             required
             data-testid="message-input"
-            className="textarea textarea-bordered h-10"
+            className="textarea textarea-bordered h-10 flex-1 join-item"
             placeholder="message"
             value={draftMessage}
             onChange={(e) => handleTextInputChange(e, setDraftMessage)}
@@ -73,10 +73,12 @@ export default function ChatBox({ messages, sendMessage }: Props) {
             }
           />
 
-          <ImageUpload
-            onImagesUpload={handleImageUpload}
-            imageURLs={imageURLs}
-          />
+          <div className="flex-none join-item">
+            <ImageUpload
+              onImagesUpload={handleImageUpload}
+              imageURLs={imageURLs}
+            />
+          </div>
         </div>
 
         <button
