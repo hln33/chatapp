@@ -6,4 +6,4 @@ COPY . .
 RUN cargo build --release
 
 EXPOSE 3000
-CMD ./target/release/socket_server
+CMD ./target/release/web_server
