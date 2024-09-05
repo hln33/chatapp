@@ -1,7 +1,7 @@
 use tracing::{info, level_filters::LevelFilter};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
 
-use socket_server::start_server;
+use web_server::start_server;
 
 const LISTENER_ADDR: &str = "0.0.0.0:3001";
 

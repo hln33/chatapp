@@ -1,5 +1,5 @@
 [package]
-name = "socket_server"
+name = "web_server"
 version = "0.1.0"
 edition = "2021"
 

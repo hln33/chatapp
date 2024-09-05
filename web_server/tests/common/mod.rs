@@ -1,8 +1,8 @@
 use std::future::IntoFuture;
 
-use socket_server::start_server;
 use tracing::level_filters::LevelFilter;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
+use web_server::start_server;
 
 pub const TEST_SERVER_ADDR: &str = "127.0.0.1:5001";
 
